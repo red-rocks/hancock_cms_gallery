@@ -1,0 +1,16 @@
+ru:
+  hancock:
+    gallery: Галерея
+
+  mongoid: &mongoid
+    models:
+      hancock/gallery/gallery: Фотогалерея
+      hancock/gallery/image: Фото в фотогалерее
+      hancock/gallery/embedded_image: Фото в фотогалерее
+
+    attributes:
+      hancock/gallery/gallery:
+      hancock/gallery/image:
+        gallery: Фотогалерея
+        gallery_id: Фотогалерея
+      hancock/gallery/embedded_image:

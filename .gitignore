@@ -1,0 +1,17 @@
+.idea
+.idea/*
+
+*.gem
+*.rbc
+
+/.bundle/
+.config
+/.yardoc
+InstalledFiles
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
