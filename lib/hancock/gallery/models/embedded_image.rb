@@ -10,11 +10,12 @@ module Hancock::Gallery
         included do
           hancock_cms_attached_file(:image)
 
-          after_save do
+          after_save :image_auto_rails_admin_jcrop
+          def image_auto_rails_admin_jcrop
             auto_rails_admin_jcrop(:image)
           end
         end
-        
+
       end
     end
   end

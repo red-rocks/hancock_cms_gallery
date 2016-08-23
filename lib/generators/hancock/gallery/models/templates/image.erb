@@ -1,19 +1,20 @@
 class <%= camelcased_class_name %> < Hancock::Gallery::Image
 
-  def image_styles
-    {}
-  end
+  # def image_styles
+  #   super
+  # end
 
-  def image_jcrop_options
-    {}
-  end
+  # def image_jcrop_options
+  #   super
+  # end
 
   ############# rails_admin ##############
   def self.rails_admin_add_fields
-    {}
+    super
   end
 
   def self.rails_admin_add_config(config)
+    super(config)
   end
 
   rails_admin(&Hancock::Gallery::Admin::Image.config(nil, false, rails_admin_add_fields) { |config|

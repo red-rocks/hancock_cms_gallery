@@ -25,25 +25,7 @@ require 'hancock/gallery/engine'
 
 
 module Hancock::Gallery
-  # Hancock::register_plugin(self)
-
-  class << self
-    def orm
-      Hancock.orm
-    end
-    def mongoid?
-      Hancock::Gallery.orm == :mongoid
-    end
-    def active_record?
-      Hancock::Gallery.orm == :active_record
-    end
-    def model_namespace
-      "Hancock::Gallery::Models::#{Hancock::Gallery.orm.to_s.camelize}"
-    end
-    def orm_specific(name)
-      "#{model_namespace}::#{name}".constantize
-    end
-  end
+  include Hancock::Plugin
 
   autoload :Admin,  'hancock/gallery/admin'
   module Admin

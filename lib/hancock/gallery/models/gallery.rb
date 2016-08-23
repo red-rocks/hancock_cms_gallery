@@ -21,7 +21,8 @@ module Hancock::Gallery
 
         # has_many :connected_objects, as: :hancock_gallerable
 
-        after_save do
+        after_save :image_auto_rails_admin_jcrop
+        def image_auto_rails_admin_jcrop
           auto_rails_admin_jcrop(:image)
         end
       end
