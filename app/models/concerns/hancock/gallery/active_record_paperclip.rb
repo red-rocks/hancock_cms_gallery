@@ -35,8 +35,8 @@ if Hancock.active_record?
             class_eval <<-EVAL
               def image_default_crop_params
                 if image and !image_file_name.blank?
-                  _methods = [:main, :standard, :big]
                   if self.respond_to?(:image_styles) and (_image_styles = self.image_styles)
+                    _methods = [:main, :standard, :big]
                     _image_styles = _image_styles.call(image) if _image_styles.respond_to?(:call)
                     _style = nil
                     _methods.each do |m|
@@ -45,16 +45,16 @@ if Hancock.active_record?
                       break if !_style.blank? and _style
                     end
                     if _style
-                      # sizes = _style.match(/^(?<width>\d+)?(x(?<height>\d+))?/)
-                      # need_width = sizes[:width].to_i
-                      # need_height = sizes[:height].to_i
+                      # sizes = _style.match(/^(?<width>[\d\.]+)?(x(?<height>[\d\.]+))?/)
+                      # need_width = sizes[:width].to_f
+                      # need_height = sizes[:height].to_f
                       sizes = Paperclip::Geometry.parse _style
-                      need_width = sizes.width.to_i
-                      need_height = sizes.height.to_i
+                      need_width = sizes.width.to_f
+                      need_height = sizes.height.to_f
 
                       current_geo = Paperclip::Geometry.from_file(image)
-                      current_width = current_geo.width.to_i
-                      current_height = current_geo.height.to_i
+                      current_width = current_geo.width.to_f
+                      current_height = current_geo.height.to_f
 
                       if need_width != 0 and need_height != 0
                         _aspect_ratio = need_width / need_height
