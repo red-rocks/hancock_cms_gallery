@@ -1,4 +1,4 @@
-module Hancock::Gallery::LoadGalleryImages
+module Hancock::Gallery::LoadGallery
   extend ActiveSupport::Concern
 
 
@@ -44,10 +44,14 @@ module Hancock::Gallery::LoadGalleryImages
   end
 
   def hancock_gallery_gallery_load_images
-    @gallery.send(hancock_gallery_gallery_images_method).enabled.sorted.page(params[:page]).per(hancock_gallery_render_gallery_images_per_page)
+    if @gallery
+      @gallery.send(hancock_gallery_gallery_images_method).enabled.sorted.page(params[:page]).per(hancock_gallery_render_gallery_images_per_page)
+    else
+      []
+    end
   end
 
-  def hancock_gallery_gallery_per_page
+  def hancock_gallery_render_gallery_images_per_page
     4
   end
 

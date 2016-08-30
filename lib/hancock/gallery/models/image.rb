@@ -19,10 +19,14 @@ module Hancock::Gallery
         def image_auto_rails_admin_jcrop
           auto_rails_admin_jcrop(:image)
         end
-      end
 
-      def self.manager_default_actions
-        super + [:nested_set, :multiple_file_upload_collection]
+
+        def self.manager_can_add_actions
+          [:nested_set, :multiple_file_upload_collection]
+        end
+        def self.rails_admin_add_visible_actions
+          [:nested_set, :multiple_file_upload_collection]
+        end
       end
 
     end

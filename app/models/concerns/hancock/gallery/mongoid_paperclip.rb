@@ -36,7 +36,7 @@ if Hancock.mongoid?
               def image_default_crop_params
                 if image and !image_file_name.blank?
                   if self.respond_to?(:image_styles) and (_image_styles = self.image_styles)
-                    _methods = [:main, :standard, :big]
+                    _methods = [:big, :main, :standard]
                     _image_styles = _image_styles.call(image) if _image_styles.respond_to?(:call)
                     _style = nil
                     _methods.each do |m|
