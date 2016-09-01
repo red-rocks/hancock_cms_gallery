@@ -32,7 +32,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'hancock_cms', "~> 0.1.0"
   spec.add_dependency 'ack_rails_admin_jcrop'
-
-  spec.add_dependency "image_optim"
-  spec.add_dependency "paperclip-optimizer"
 end

@@ -31,51 +31,7 @@ if Hancock.active_record?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          if name == :image
-            class_eval <<-EVAL
-              def image_default_crop_params
-                if image and !image_file_name.blank?
-                  if self.respond_to?(:image_styles) and (_image_styles = self.image_styles)
-                    _methods = [:main, :standard, :big]
-                    _image_styles = _image_styles.call(image) if _image_styles.respond_to?(:call)
-                    _style = nil
-                    _methods.each do |m|
-                      _style = _image_styles[m]
-                      _style = _style[:geometry] if _style and _style.is_a?(Hash)
-                      break if !_style.blank? and _style
-                    end
-                    if _style
-                      # sizes = _style.match(/^(?<width>[\d\.]+)?(x(?<height>[\d\.]+))?/)
-                      # need_width = sizes[:width].to_f
-                      # need_height = sizes[:height].to_f
-                      sizes = Paperclip::Geometry.parse _style
-                      need_width = sizes.width.to_f
-                      need_height = sizes.height.to_f
-
-                      current_geo = Paperclip::Geometry.from_file(image)
-                      current_width = current_geo.width.to_f
-                      current_height = current_geo.height.to_f
-
-                      if need_width != 0 and need_height != 0
-                        _aspect_ratio = need_width / need_height
-                      else
-                        _aspect_ratio = current_width / current_height
-                      end
-
-                      _width = (need_width > current_width ? current_width : need_width)
-                      _width = current_width if _width == 0
-                      _height = _width / _aspect_ratio
-                      _height = (_height > current_width ? current_width : _height)
-                      _width = _height * _aspect_ratio
-                      _width = (_width > current_width ? current_width : _width)
-
-                      default_crop_params_for_center(:image, _width, _height)
-                    end
-                  end
-                end
-              end
-            EVAL
-          end
+          set_default_auto_crop_params_for
 
         end
 

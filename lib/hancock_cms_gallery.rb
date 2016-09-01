@@ -13,8 +13,8 @@ if Hancock.mongoid?
 elsif Hancock.active_record?
   require 'paperclip'
 end
-require "image_optim"
-require "paperclip-optimizer"
+# require "image_optim"
+# require "paperclip-optimizer"
 
 require "ack_rails_admin_jcrop"
 
