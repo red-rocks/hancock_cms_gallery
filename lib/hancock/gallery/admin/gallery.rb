@@ -23,6 +23,8 @@ module Hancock::Gallery
           #   read_only true
           # end
 
+          nested_set({max_depth: 1, scopes: []})
+
           if defined?(RailsAdminMultipleFileUpload)
             multiple_file_upload(
                 {
