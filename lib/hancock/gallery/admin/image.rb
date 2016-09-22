@@ -2,6 +2,16 @@ module Hancock::Gallery
   module Admin
     module Image
       def self.config(nav_label = nil, without_gallery = false, fields = {})
+        if nav_label.is_a?(Hash)
+          fields, nav_label = nav_label, nil
+        end
+        if nav_label.is_a?(Boolean)
+          if without_gallery.is_a?(Hash)
+            fields, without_gallery = without_gallery, false
+          end
+          without_gallery, nav_label = nav_label, nil
+        end
+
         Proc.new {
           navigation_label(nav_label || I18n.t('hancock.gallery'))
           field :enabled, :toggle do

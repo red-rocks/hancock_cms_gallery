@@ -2,6 +2,10 @@ module Hancock::Gallery
   module Admin
     module Gallery
       def self.config(nav_label = nil, fields = {})
+        if nav_label.is_a?(Hash)
+          fields, nav_label = nav_label, nil
+        end
+
         Proc.new {
           navigation_label(nav_label || I18n.t('hancock.gallery'))
           field :enabled, :toggle do
@@ -19,9 +23,9 @@ module Hancock::Gallery
 
           field :image, :hancock_image
 
-          # field :gallery_objects do
-          #   read_only true
-          # end
+          field :hancock_gallerable do
+            read_only true
+          end
 
           nested_set({max_depth: 1, scopes: []})
 

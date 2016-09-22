@@ -19,7 +19,7 @@ module Hancock::Gallery
 
         hancock_cms_attached_file(:image)
 
-        # has_many :connected_objects, as: :hancock_gallerable
+        belongs_to :gallerable, polymorphic: true
 
         after_save :image_auto_rails_admin_jcrop
         def image_auto_rails_admin_jcrop
@@ -42,7 +42,7 @@ module Hancock::Gallery
           ret += [:comments, :model_comments] if Hancock::Gallery.config.ra_comments_support
           ret.freeze
         end
-        
+
       end
 
     end
