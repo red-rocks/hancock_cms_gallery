@@ -23,7 +23,7 @@ module Hancock::Gallery
 
           field :image, :hancock_image
 
-          field :hancock_gallerable do
+          field :gallerable do
             read_only true
           end
 
