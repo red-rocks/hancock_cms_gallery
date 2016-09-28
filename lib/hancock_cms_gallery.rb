@@ -9,7 +9,11 @@ require "hancock/gallery/version"
 # require 'hancock_cms'
 
 if Hancock.mongoid?
-  require 'glebtv-mongoid-paperclip'
+  begin
+    require 'glebtv-mongoid-paperclip'
+  rescue
+    require 'mongoid-paperclip'
+  end
 elsif Hancock.active_record?
   require 'paperclip'
 end

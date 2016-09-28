@@ -20,6 +20,10 @@ or this
 ```ruby
 gem 'glebtv-mongoid-paperclip' # Mongoid
 ```
+or this
+```ruby
+gem 'mongoid-paperclip' # Mongoid
+```
 before it.
 
 And then execute:
