@@ -1,8 +1,10 @@
 if Hancock.active_record?
   module Hancock::Gallery::ActiveRecordPaperclip
     extend ActiveSupport::Concern
-
-    include ::Paperclip
+    
+    included do
+      include ::Paperclip
+    end
 
     module ClassMethods
       def hancock_cms_active_record_attached_file(name, opts = {})

@@ -10,9 +10,13 @@ require "hancock/gallery/version"
 
 if Hancock.mongoid?
   begin
-    require 'glebtv-mongoid-paperclip'
-  rescue
-    require 'mongoid-paperclip'
+    begin
+      require 'glebtv-mongoid-paperclip'
+    rescue LoadError
+      require 'mongoid-paperclip'
+    end
+  rescue LoadError
+    raise 'Add mongoid-paperclip or glebtv-mongoid-paperclip'
   end
 elsif Hancock.active_record?
   require 'paperclip'

@@ -2,7 +2,9 @@ if Hancock.mongoid?
   module Hancock::Gallery::MongoidPaperclip
     extend ActiveSupport::Concern
 
-    include Mongoid::Paperclip
+    included do
+      include ::Mongoid::Paperclip
+    end
 
     module ClassMethods
       def hancock_cms_mongoid_attached_file(name, opts = {})
