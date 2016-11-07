@@ -13,7 +13,7 @@ module Hancock::Gallery
         label I18n.t('hancock.images')
         field :image, :hancock_image
         fields.map { |f|
-          fields f
+          field f
         }
 
         if block_given?
