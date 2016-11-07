@@ -5,6 +5,9 @@ module Hancock::Gallery
       include Hancock::Model
       include Hancock::Enableable
       include Hancock::Gallery::Paperclipable
+      include Hancock::Gallery::AutoCrop
+      
+      include Hancock::Cacheable
 
       include Hancock::Gallery.orm_specific('Image')
 

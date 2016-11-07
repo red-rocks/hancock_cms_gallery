@@ -1,7 +1,11 @@
 module Hancock::Gallery
   module Admin
     module EmbeddedImage
-      def self.config(fields = {})
+      def self.config(nav_label = I18n.t('hancock.gallery'), fields = {})
+        if nav_label.is_a?(Hash)
+          nav_label, fields = nav_label[:nav_label], nav_label
+        end
+        nav_label ||= I18n.t('hancock.gallery')
 
         if fields
           if fields.is_a?(Hash)
@@ -23,11 +27,11 @@ module Hancock::Gallery
         end
 
         if block_given?
-          Hancock::Admin::EmbeddedElement.config(nil, fields) do |config|
+          Hancock::Admin::EmbeddedElement.config(nav_label, fields) do |config|
             yield config
           end
         else
-          Hancock::Admin::EmbeddedElement.config(nil, fields)
+          Hancock::Admin::EmbeddedElement.config(nav_label, fields)
         end
       end
     end

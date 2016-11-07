@@ -1,7 +1,7 @@
 if Hancock.active_record?
   module Hancock::Gallery::ActiveRecordPaperclip
     extend ActiveSupport::Concern
-    
+
     included do
       include ::Paperclip
     end
@@ -33,8 +33,7 @@ if Hancock.active_record?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          set_default_auto_crop_params_for
-
+          set_default_auto_crop_params_for name
         end
 
         has_attached_file name, opts

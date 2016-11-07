@@ -1,6 +1,6 @@
-class <%= camelcased_class_name %> < Hancock::Gallery::Image
+class <%= camelcased_class_name %> < Hancock::Gallery::Gallery
 
-  # belongs_to :<%= underscored_gallery_class_name %>, class_name: "<%= camelcased_gallery_class_name %>"
+  # has_many :<%= underscored_image_class_name %>, class_name: "<%= camelcased_image_class_name %>"
 
   # # after_save :image_auto_rails_admin_jcrop
   # def image_auto_rails_admin_jcrop
@@ -41,10 +41,8 @@ class <%= camelcased_class_name %> < Hancock::Gallery::Image
     [].freeze
   end
 
-  # rails_admin(&Hancock::Gallery::Admin::Image.config(%NAV_LABEL%, %WITHOUT_GALLERY%, rails_admin_add_fields) { |config|
-  # rails_admin(&Hancock::Gallery::Admin::Image.config(%NAV_LABEL%, rails_admin_add_fields) { |config|
-  # rails_admin(&Hancock::Gallery::Admin::Image.config(%WITHOUT_GALLERY%, rails_admin_add_fields) { |config|
-  rails_admin(&Hancock::Gallery::Admin::Image.config(rails_admin_add_fields) { |config|
+  # rails_admin(&Hancock::Gallery::Admin::Gallery.config(%NAV_LABEL%, rails_admin_add_fields) { |config|
+  rails_admin(&Hancock::Gallery::Admin::Gallery.config(rails_admin_add_fields) { |config|
     rails_admin_add_config(config)
   })
 end

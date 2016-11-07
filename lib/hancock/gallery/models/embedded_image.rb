@@ -4,6 +4,7 @@ module Hancock::Gallery
       if Hancock::Gallery.mongoid?
         extend ActiveSupport::Concern
         include Hancock::Gallery::Paperclipable
+        include Hancock::Gallery::AutoCrop
 
         include Hancock::Gallery.orm_specific('EmbeddedImage')
 

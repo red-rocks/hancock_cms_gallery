@@ -3,11 +3,11 @@ module Hancock::Gallery
     module Gallery
       def self.config(nav_label = nil, fields = {})
         if nav_label.is_a?(Hash)
-          fields, nav_label = nav_label, nil
+          nav_label, fields = nav_label[:nav_label], nav_label
         end
 
         Proc.new {
-          navigation_label(nav_label || I18n.t('hancock.gallery'))
+          navigation_label(!nav_label.blank? ? nav_label : I18n.t('hancock.gallery'))
           field :enabled, :toggle do
             searchable false
           end
@@ -15,11 +15,12 @@ module Hancock::Gallery
           field :name, :string do
             searchable true
           end
-          group :URL do
-            active false
-            field :slugs, :hancock_slugs
-            field :text_slug
-          end
+          group :URL, &Hancock::Admin.url_block
+          # group :URL do
+          #   active false
+          #   field :slugs, :hancock_slugs
+          #   field :text_slug
+          # end
 
           field :image, :hancock_image
 

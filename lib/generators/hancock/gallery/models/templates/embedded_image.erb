@@ -5,6 +5,12 @@ class <%= camelcased_class_name %> < Hancock::Gallery::EmbeddedImage
     find_through(<%= camelcased_parent_class_name %>, '<%= underscored_pluralized_class_name %>', id)
   end
 
+  # # after_save :image_auto_rails_admin_jcrop
+  # def image_auto_rails_admin_jcrop
+  #   auto_rails_admin_jcrop(:image) # or nil for cancel autocrop
+  # end
+
+  # # hancock_cms_attached_file(:image)
   # def image_styles
   #   super
   # end
@@ -22,6 +28,23 @@ class <%= camelcased_class_name %> < Hancock::Gallery::EmbeddedImage
     super(config)
   end
 
+  def admin_can_user_defined_actions
+    [].freeze
+  end
+  def admin_cannot_user_defined_actions
+    [].freeze
+  end
+  def manager_can_user_defined_actions
+    [].freeze
+  end
+  def manager_cannot_user_defined_actions
+    [].freeze
+  end
+  def rails_admin_user_defined_visible_actions
+    [].freeze
+  end
+
+  # rails_admin(&Hancock::Gallery::Admin::EmbeddedElement.config(%NAV_LABEL%, rails_admin_add_fields) { |config|
   rails_admin(&Hancock::Gallery::Admin::EmbeddedImage.config(nil, rails_admin_add_fields) { |config|
     rails_admin_add_config(config)
   })

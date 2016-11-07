@@ -1,6 +1,6 @@
 ru:
   hancock:
-    gallery: Галерея
+    gallery: "Галерея"
 
   mongoid: &mongoid
     models:

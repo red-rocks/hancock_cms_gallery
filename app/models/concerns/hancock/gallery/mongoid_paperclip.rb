@@ -34,7 +34,7 @@ if Hancock.mongoid?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          set_default_auto_crop_params_for
+          set_default_auto_crop_params_for name
         end
 
         has_mongoid_attached_file name, opts

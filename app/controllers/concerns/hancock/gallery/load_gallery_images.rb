@@ -3,20 +3,25 @@ module Hancock::Gallery::LoadGalleryImages
 
 
   def hancock_gallery_render_gallery_images
-    @gallery_images = hancock_gallery_load_gallery_images
+    redirected = hancock_gallery_gallery_images_redirect_to_if_no_xhr unless request.xhr?
 
-    @next_page = (params[:page] || 1).to_i + 1
+    unless redirected
+      @gallery_images = hancock_gallery_load_gallery_images
 
-    render_opts = {
-      layout:   hancock_gallery_gallery_images_layout,
-      action:   hancock_gallery_gallery_images_action,
-      partial:  hancock_gallery_gallery_images_partial
-    }
-    render render_opts.compact
+      @next_page = (params[:page] || 1).to_i + 1
+
+      render_opts = {
+        layout:   hancock_gallery_gallery_images_layout,
+        action:   hancock_gallery_gallery_images_action,
+        partial:  hancock_gallery_gallery_images_partial
+      }
+      render render_opts.compact
+    end
   end
 
-  private
 
+
+  private
   def hancock_gallery_gallery_images_layout
     request.xhr? ? false : 'application'
   end
@@ -29,18 +34,25 @@ module Hancock::Gallery::LoadGalleryImages
     nil
   end
 
+  def hancock_gallery_gallery_images_redirect_to_if_no_xhr
+    nil
+  end
+
   def hancock_gallery_gallery_image_class
     Hancock::Gallery::Image
   end
 
+  def hancock_gallery_gallery_image_scope
+    hancock_gallery_gallery_image_class.enabled.sorted
+  end
+
   def hancock_gallery_load_gallery_images
-    hancock_gallery_gallery_image_class.enabled.sorted.page(params[:page]).per(hancock_gallery_gallery_images_per_page)
+    hancock_gallery_gallery_image_scope.page(params[:page]).per(hancock_gallery_gallery_images_per_page)
   end
 
   def hancock_gallery_gallery_images_per_page
     4
   end
-
 
 
 end

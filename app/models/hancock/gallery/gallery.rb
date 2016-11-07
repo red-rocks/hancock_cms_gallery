@@ -9,7 +9,7 @@ module Hancock::Gallery
 
     include Hancock::Gallery::Decorators::Gallery
 
-    rails_admin(&Hancock::Gallery::Admin::Gallery.config(nil, rails_admin_add_fields) { |config|
+    rails_admin(&Hancock::Gallery::Admin::Gallery.config(rails_admin_add_fields) { |config|
       rails_admin_add_config(config)
     })
   end

@@ -5,8 +5,9 @@ module Hancock::Gallery
 
       include Hancock::Gallery::Decorators::EmbeddedImage
 
-      # use it in inherited model
-      # rails_admin &Hancock::Gallery::Admin::EmbeddedImage.config
+      rails_admin(&Hancock::Gallery::Admin::EmbeddedImage.config(rails_admin_add_fields) { |config|
+        rails_admin_add_config(config)
+      })
 
       # use it in rails_admin in parent model for sort
       # sort_embedded({fields: [:embedded_field_1, :embedded_field_2...]})

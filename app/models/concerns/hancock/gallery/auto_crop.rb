@@ -13,7 +13,7 @@ module Hancock::Gallery::AutoCrop
           #{crop_area}
         end
         def default_#{field}_auto_crop_method
-          :#{_default_method}
+          #{_default_method.to_sym}
         end
         def #{field}_default_crop_params
           if #{field} and !#{field}_file_name.blank?

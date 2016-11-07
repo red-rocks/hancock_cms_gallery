@@ -3,17 +3,17 @@ module Hancock::Gallery
     module Image
       def self.config(nav_label = nil, without_gallery = false, fields = {})
         if nav_label.is_a?(Hash)
-          fields, nav_label = nav_label, nil
+          nav_label, without_gallery, fields = nav_label[:nav_label], (nav_label[:without_gallery] || false), nav_label
         end
         if nav_label.is_a?(Boolean)
           if without_gallery.is_a?(Hash)
-            fields, without_gallery = without_gallery, false
+            nav_label, without_gallery, fields = without_gallery[:nav_label], nav_label, without_gallery
           end
-          without_gallery, nav_label = nav_label, nil
+          nav_label, without_gallery, fields = fields[:nav_label], nav_label, fields
         end
 
         Proc.new {
-          navigation_label(nav_label || I18n.t('hancock.gallery'))
+          navigation_label(!nav_label.blank? ? nav_label : I18n.t('hancock.gallery'))
           field :enabled, :toggle do
             searchable false
           end
@@ -26,6 +26,8 @@ module Hancock::Gallery
             searchable true
           end
           field :image, :hancock_image
+
+          group :caching, &Hancock::Admin.caching_block
 
           nested_set({max_depth: 1, scopes: []})
 

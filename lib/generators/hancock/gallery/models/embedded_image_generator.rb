@@ -3,8 +3,8 @@ require 'rails/generators'
 module Hancock::Gallery::Models
   class EmbeddedImageGenerator < Rails::Generators::Base
     source_root File.expand_path('../templates', __FILE__)
-    argument :class_name, type: :string
-    argument :parent_class_name, type: :string
+    argument :class_name_arg, type: :string, default: ""
+    argument :parent_class_name_arg, type: :string, default: ""
 
     desc 'Hancock::Gallery EmbeddedImage Model generator'
     def embedded_image
@@ -12,6 +12,10 @@ module Hancock::Gallery::Models
     end
 
     private
+    def class_name
+      class_name_arg.blank? ? "SetClassForEmbeddedImage" : class_name_arg
+    end
+
     def capitalized_class_name
       class_name.capitalize
     end

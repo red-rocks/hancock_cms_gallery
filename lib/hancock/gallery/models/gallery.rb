@@ -6,6 +6,7 @@ module Hancock::Gallery
       include ManualSlug
       include Hancock::Enableable
       include Hancock::Gallery::Paperclipable
+      include Hancock::Gallery::AutoCrop
 
       include Hancock::Gallery.orm_specific('Gallery')
 
@@ -19,7 +20,11 @@ module Hancock::Gallery
 
         hancock_cms_attached_file(:image)
 
-        belongs_to :gallerable, polymorphic: true
+        if Hancock.rails4?
+          belongs_to :gallerable, polymorphic: true
+        else
+          belongs_to :gallerable, polymorphic: true, optional: true
+        end
 
         after_save :image_auto_rails_admin_jcrop
         def image_auto_rails_admin_jcrop
