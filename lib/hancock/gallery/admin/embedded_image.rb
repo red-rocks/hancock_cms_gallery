@@ -19,7 +19,7 @@ module Hancock::Gallery
             }
             unless finded
               fields << {
-                name: :image,
+                name: :default,
                 fields: {
                   image: :hancock_image
                 }
