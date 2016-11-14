@@ -3,9 +3,9 @@ module Hancock::Gallery
     module Image
       def self.config(nav_label = nil, without_gallery = false, fields = {})
         if nav_label.is_a?(Hash)
-          nav_label, without_gallery, fields = nav_label[:nav_label], (nav_label[:without_gallery] || false), nav_label
+          nav_label, without_gallery, fields = nav_label[:nav_label], (nav_label[:without_gallery].nil? ? true : nav_label[:without_gallery]), nav_label
         elsif nav_label.is_a?(Array)
-          nav_label, without_gallery, fields = nil, false, nav_label
+          nav_label, without_gallery, fields = nil, true, nav_label
         end
         if nav_label.is_a?(Boolean)
           if without_gallery.is_a?(Hash)
