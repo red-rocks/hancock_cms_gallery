@@ -8,16 +8,14 @@ module Hancock::Gallery::AutoCrop
       crop_area = [_width, _height].compact
       _default_method = opts.delete(:default_method) || :default_crop_params_for_center
 
+      cattr_accessor "#{field}_default_max_crop_area".to_sym, "#{field}_default_auto_crop_method".to_sym
+      self.send("#{field}_default_max_crop_area=".to_sym, crop_area)
+      self.send("#{field}_default_auto_crop_method=".to_sym, _default_method.to_sym)
+
       class_eval <<-EVAL
-        def default_#{field}_max_crop_area
-          #{crop_area}
-        end
-        def default_#{field}_auto_crop_method
-          #{_default_method.to_sym}
-        end
         def #{field}_default_crop_params
           if #{field} and !#{field}_file_name.blank?
-            _default_max_crop_area = self.default_#{field}_max_crop_area
+            _default_max_crop_area = self.#{field}_default_max_crop_area
             if _default_max_crop_area or self.respond_to?(:#{field}_styles) and (_#{field}_styles = self.#{field}_styles)
               unless _default_max_crop_area
                 _methods = [:big, :main, :standard]
@@ -64,7 +62,7 @@ module Hancock::Gallery::AutoCrop
               _width = _height * _aspect_ratio
               _width = (_width > current_width ? current_width : _width)
 
-              self.send(self.default_#{field}_auto_crop_method, :#{field}, _width, _height)
+              self.send(self.#{field}_default_auto_crop_method, #{field.to_sym}, _width, _height)
             end
           end
         end
