@@ -13,6 +13,11 @@ module Hancock::Gallery::AutoCrop
       self.send("#{field}_default_auto_crop_method=".to_sym, _default_method.to_sym)
 
       class_eval <<-EVAL
+        after_save :#{field}_auto_rails_admin_jcrop
+        def #{field}_auto_rails_admin_jcrop
+          auto_rails_admin_jcrop(#{field.to_sym})
+        end
+
         def #{field}_default_crop_params
           if #{field} and !#{field}_file_name.blank?
             _default_max_crop_area = self.#{field}_default_max_crop_area

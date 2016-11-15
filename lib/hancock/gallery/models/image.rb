@@ -4,9 +4,13 @@ module Hancock::Gallery
       extend ActiveSupport::Concern
       include Hancock::Model
       include Hancock::Enableable
+
       include Hancock::Gallery::Paperclipable
       include Hancock::Gallery::AutoCrop
-      
+      # if Hancock::Gallery.config.watermark_support
+      #   include Hancock::Gallery::Watermarkable
+      # end
+
       include Hancock::Cacheable
 
       include Hancock::Gallery.orm_specific('Image')
@@ -21,12 +25,13 @@ module Hancock::Gallery
 
         acts_as_nested_set
 
+        set_default_auto_crop_params_for(:image)
         hancock_cms_attached_file(:image)
-
-        after_save :image_auto_rails_admin_jcrop
-        def image_auto_rails_admin_jcrop
-          auto_rails_admin_jcrop(:image)
-        end
+        # if Hancock::Gallery.config.watermark_support
+        #   paperclip_with_watermark(:image)
+        # else
+        #   hancock_cms_attached_file(:image)
+        # end
 
         def self.manager_can_add_actions
           ret = [:nested_set, :multiple_file_upload_collection]

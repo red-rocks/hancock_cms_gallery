@@ -3,18 +3,23 @@ module Hancock::Gallery
     module EmbeddedImage
       if Hancock::Gallery.mongoid?
         extend ActiveSupport::Concern
+
         include Hancock::Gallery::Paperclipable
         include Hancock::Gallery::AutoCrop
+        # if Hancock::Gallery.config.watermark_support
+        #   include Hancock::Gallery::Watermarkable
+        # end
 
         include Hancock::Gallery.orm_specific('EmbeddedImage')
 
         included do
+          set_default_auto_crop_params_for(:image)
           hancock_cms_attached_file(:image)
-
-          after_save :image_auto_rails_admin_jcrop
-          def image_auto_rails_admin_jcrop
-            auto_rails_admin_jcrop(:image)
-          end
+          # if Hancock::Gallery.config.watermark_support
+          #   paperclip_with_watermark(:image)
+          # else
+          #   hancock_cms_attached_file(:image)
+          # end
         end
 
       end

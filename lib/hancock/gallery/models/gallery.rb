@@ -5,8 +5,12 @@ module Hancock::Gallery
       include Hancock::Model
       include ManualSlug
       include Hancock::Enableable
+
       include Hancock::Gallery::Paperclipable
       include Hancock::Gallery::AutoCrop
+      # if Hancock::Gallery.config.watermark_support
+      #   include Hancock::Gallery::Watermarkable
+      # end
 
       include Hancock::Gallery.orm_specific('Gallery')
 
@@ -18,7 +22,14 @@ module Hancock::Gallery
 
         acts_as_nested_set
 
+        set_default_auto_crop_params_for(:image)
         hancock_cms_attached_file(:image)
+        # if Hancock::Gallery.config.watermark_support
+        #   paperclip_with_watermark(:image)
+        # else
+        #   hancock_cms_attached_file(:image)
+        # end
+
 
         if Hancock.rails4?
           belongs_to :gallerable, polymorphic: true
@@ -26,10 +37,6 @@ module Hancock::Gallery
           belongs_to :gallerable, polymorphic: true, optional: true
         end
 
-        after_save :image_auto_rails_admin_jcrop
-        def image_auto_rails_admin_jcrop
-          auto_rails_admin_jcrop(:image)
-        end
 
         def self.manager_can_add_actions
           ret = [:nested_set]

@@ -39,23 +39,27 @@ module Hancock::Gallery
   module Admin
     autoload :Gallery,        'hancock/gallery/admin/gallery'
     autoload :Image,          'hancock/gallery/admin/image'
+    autoload :OriginalImage,  'hancock/gallery/admin/original_image'
     autoload :EmbeddedImage,  'hancock/gallery/admin/embedded_image'
   end
 
   module Models
     autoload :Gallery,        'hancock/gallery/models/gallery'
     autoload :Image,          'hancock/gallery/models/image'
+    autoload :OriginalImage,  'hancock/gallery/models/original_image'
     autoload :EmbeddedImage,  'hancock/gallery/models/embedded_image'
 
     module Mongoid
       autoload :Gallery,        'hancock/gallery/models/mongoid/gallery'
       autoload :Image,          'hancock/gallery/models/mongoid/image'
+      autoload :OriginalImage,  'hancock/gallery/models/mongoid/original_image'
       autoload :EmbeddedImage,  'hancock/gallery/models/mongoid/embedded_image'
     end
 
     module ActiveRecord
       autoload :Gallery,        'hancock/gallery/models/active_record/gallery'
       autoload :Image,          'hancock/gallery/models/active_record/image'
+      # autoload :OriginalImage,  'hancock/gallery/models/active_record/original_image'
     end
   end
 

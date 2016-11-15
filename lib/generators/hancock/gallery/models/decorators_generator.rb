@@ -14,7 +14,7 @@ module Hancock::Gallery::Models
 
     private
     def permitted_models
-      ['embedded_image', 'gallery', 'image']
+      ['embedded_image', 'gallery', 'image', 'original_image']
     end
 
   end
