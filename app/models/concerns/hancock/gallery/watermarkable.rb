@@ -11,13 +11,12 @@ module Hancock::Gallery::Watermarkable
       has_one "original_#{field}_data", as: :originable, class_name: original_image_class_name
 
       class_eval %{
-        after_save :#{field}_auto_rails_admin_jcrop
         def #{field}_auto_rails_admin_jcrop
           return if self.#{field}.blank? or !self.#{field}_updated_at_changed? or self.#{field}_autocropped
           self.#{field}_autocropped = true
 
           if File.exists?(self.#{field}.path)
-            auto_rails_admin_jcrop(#{field.to_sym})
+            auto_rails_admin_jcrop(:#{field})
 
           elsif (_data = self.original_#{field})
             _old_filename = self.#{field}_file_name
@@ -31,7 +30,7 @@ module Hancock::Gallery::Watermarkable
               # self.#{field} = _temp
               # self.#{field}.instance_write(:file_name, "\#{SecureRandom.hex}\#{File.extname(_old_filename)}")
               self.class.skip_callback(:save, :after, "original_#{field}_to_db".to_sym)
-              auto_rails_admin_jcrop(#{field.to_sym})
+              auto_rails_admin_jcrop(:#{field})
               self.class.set_callback(:save, :after, "original_#{field}_to_db".to_sym)
               _temp.unlink
             end
@@ -59,8 +58,14 @@ module Hancock::Gallery::Watermarkable
           original_#{field}_data.original if original_#{field}_data
         end
         def original_#{field}_base64
-          _data = Base64.encode64(self.original_#{field}_data.original.data)
-          _content_type = self.#{field}_content_type
+          _original = self.original_#{field}
+          if _original
+            _data = Base64.encode64(_original.data)
+            _content_type = self.#{field}_content_type
+          else
+            _data = ''
+            _content_type = 'jpg'
+          end
           "data:\#{_content_type};base64,\#{_data}"
         end
 

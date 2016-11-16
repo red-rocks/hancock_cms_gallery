@@ -15,14 +15,14 @@ module Hancock::Gallery::AutoCrop
       class_eval <<-EVAL
         after_save :#{field}_auto_rails_admin_jcrop
         def #{field}_auto_rails_admin_jcrop
-          auto_rails_admin_jcrop(#{field.to_sym})
+          auto_rails_admin_jcrop(:#{field})
         end
 
         def #{field}_default_crop_params
-          if #{field} and !#{field}_file_name.blank?
+          if self.#{field} and !self.#{field}_file_name.blank?
             _default_max_crop_area = self.#{field}_default_max_crop_area
             if _default_max_crop_area or self.respond_to?(:#{field}_styles) and (_#{field}_styles = self.#{field}_styles)
-              unless _default_max_crop_area
+              if _default_max_crop_area.blank?
                 _methods = [:big, :main, :standard]
                 _#{field}_styles = _#{field}_styles.call(#{field}) if _#{field}_styles.respond_to?(:call)
                 _style = nil
@@ -49,10 +49,18 @@ module Hancock::Gallery::AutoCrop
                   need_height = _default_max_crop_area[1].to_f
                 end
               end
+              need_width = need_width.to_f
+              need_height = need_height.to_f
 
-              current_geo = Paperclip::Geometry.from_file(#{field})
-              current_width = current_geo.width.to_f
-              current_height = current_geo.height.to_f
+              begin
+                _file = self.#{field}.queued_for_write.blank? ? self.#{field} : self.#{field}.queued_for_write[:original]
+                current_geo = Paperclip::Geometry.from_file(_file)
+                current_width = current_geo.width.to_f
+                current_height = current_geo.height.to_f
+              rescue
+                current_width ||= need_width.to_f
+                current_height ||= need_height.to_f
+              end
 
               if need_width != 0 and need_height != 0
                 _aspect_ratio = need_width / need_height
@@ -67,7 +75,7 @@ module Hancock::Gallery::AutoCrop
               _width = _height * _aspect_ratio
               _width = (_width > current_width ? current_width : _width)
 
-              self.send(self.#{field}_default_auto_crop_method, #{field.to_sym}, _width, _height)
+              self.send(self.#{field}_default_auto_crop_method, :#{field}, _width, _height)
             end
           end
         end

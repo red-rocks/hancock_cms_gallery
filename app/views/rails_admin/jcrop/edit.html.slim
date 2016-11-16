@@ -1,0 +1,18 @@
+- if params[:img_src]
+  = form_tag nil, @form_options.merge({class: "form-horizontal denser"})
+    = image_tag params[:img_src], @image_tag_options
+    = hidden_field_tag :crop_field, @field
+    = hidden_field_tag :crop_model, @object.class.name
+- else
+  = form_tag nil, @form_options.merge({class: "form-horizontal denser"}) do
+    - if File.exists?(@object.send(@field).path) 
+      = image_tag @object.send(@field).url, @image_tag_options
+    - elsif @object.respond_to?("original_#{@field}_base64".to_sym)
+      = image_tag @object.send("original_#{@field}_base64".to_sym), @image_tag_options
+      
+    = hidden_field_tag :crop_x
+    = hidden_field_tag :crop_y
+    = hidden_field_tag :crop_w
+    = hidden_field_tag :crop_h
+    = hidden_field_tag :crop_field, @field
+    = render partial: 'rails_admin/main/submit_buttons'
