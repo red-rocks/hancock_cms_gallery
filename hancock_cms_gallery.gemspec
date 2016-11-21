@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'hancock_cms', [">=1.0", "<=2.0"]
   # spec.add_dependency 'hancock_cms', ["~> 1.0", "~> 2.0"]
-  
-  spec.add_dependency 'ack_rails_admin_jcrop'
+
+  spec.add_dependency 'ack_rails_admin_jcrop', '~> 0.2.0'
 end
