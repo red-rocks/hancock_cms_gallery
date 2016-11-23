@@ -2,7 +2,7 @@ require 'rails/generators'
 require 'rails/generators/active_record'
 
 module Hancock::Gallery
-  class MigrationGenerator < Rails::Generators::Base
+  class MigrationsGenerator < Rails::Generators::Base
     include ActiveRecord::Generators::Migration
     source_root File.expand_path('../templates', __FILE__)
 

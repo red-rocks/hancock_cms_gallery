@@ -37,7 +37,7 @@ module Hancock::Gallery::Models
     end
 
     def camelcased_class_name
-      gallery_class_name.camelcase
+      class_name.camelcase
     end
 
     def underscored_image_class_name
