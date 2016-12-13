@@ -8,6 +8,8 @@ module Hancock::Gallery
   class Configuration
 
     attr_accessor :localize
+    
+    attr_accessor :cache_support
 
     attr_accessor :model_settings_support
     attr_accessor :user_abilities_support
@@ -16,6 +18,8 @@ module Hancock::Gallery
 
     def initialize
       @localize = Hancock.config.localize
+
+      @cache_support  = defined?(Hancock::Cache)
 
       @model_settings_support = defined?(RailsAdminModelSettings)
       @user_abilities_support = defined?(RailsAdminUserAbilities)
