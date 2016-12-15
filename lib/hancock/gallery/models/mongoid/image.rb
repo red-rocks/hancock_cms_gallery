@@ -5,8 +5,8 @@ module Hancock::Gallery
         extend ActiveSupport::Concern
 
         included do
-          index({gallery_id: 1})
-          index({enabled: 1, lft: 1})
+          index({gallery_id: 1}, {background: true})
+          index({enabled: 1, lft: 1}, {background: true})
 
           field :name, type: String, localize: Hancock::Gallery.configuration.localize
 

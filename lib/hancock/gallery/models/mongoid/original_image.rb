@@ -5,7 +5,7 @@ module Hancock::Gallery
         extend ActiveSupport::Concern
 
         included do
-          index({originable_id: 1, originable_type: 1})
+          index({originable_id: 1, originable_type: 1}, {background: true})
 
           field :original, type: BSON::Binary
         end

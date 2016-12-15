@@ -26,7 +26,7 @@ if Hancock.active_record?
             opts[:processors].uniq!
           end
 
-          opts[:convert_options] = {all: "-quality 75 -strip"} if opts[:convert_options].blank?
+          opts[:convert_options] = {all: ["-quality", "75", "-strip"]} if opts[:convert_options].blank?
 
           if opts[:styles].blank?
             styles_method_name = "#{name}_styles"
