@@ -34,7 +34,7 @@ module Hancock::Gallery
         # end
 
         def self.manager_can_add_actions
-          ret = [:nested_set, :multiple_file_upload_collection]
+          ret = [:nested_set]
           # ret += [:multiple_file_upload, :sort_embedded] if Hancock::Gallery.mongoid?
           ret << :model_settings if Hancock::Gallery.config.model_settings_support
           ret << :model_accesses if Hancock::Gallery.config.user_abilities_support

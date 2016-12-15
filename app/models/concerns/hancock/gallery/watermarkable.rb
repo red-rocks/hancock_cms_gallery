@@ -8,7 +8,7 @@ module Hancock::Gallery::Watermarkable
 
       hancock_cms_attached_file field, processors: [:watermark]
       # field "original_#{field}", type: BSON::Binary
-      has_one "original_#{field}_data", as: :originable, class_name: original_image_class_name
+      has_one "original_#{field}_data", as: :originable, class_name: original_image_class_name, dependent: :destroy
 
       class_eval %{
         def #{field}_auto_rails_admin_jcrop
@@ -55,23 +55,18 @@ module Hancock::Gallery::Watermarkable
         end
 
         def original_#{field}
-          original_#{field}_data.original if original_#{field}_data
+          original_#{field}_data and original_#{field}_data.original
         end
         def original_#{field}_base64
-          _original = self.original_#{field}
-          if _original
-            _data = Base64.encode64(_original.data)
-            _content_type = self.#{field}_content_type
-          else
-            _data = ''
-            _content_type = 'jpg'
-          end
-          "data:\#{_content_type};base64,\#{_data}"
+          original_#{field}_data and original_#{field}_data.original_as_base64(self.#{field}_content_type)
+        end
+        def original_#{field}_image
+          original_#{field}_data and original_#{field}_data.original_as_image(self.#{field}_content_type)
         end
 
         after_save :original_#{field}_to_db
         def original_#{field}_to_db
-          if self.#{field}_file_name
+          unless self.#{field}.blank?
             if File.exists?(self.#{field}.path)
               _original = self.original_#{field}_data
               unless _original
@@ -83,6 +78,8 @@ module Hancock::Gallery::Watermarkable
                 File.unlink(self.#{field}.path)
               end
             end
+          else
+            self.original_#{field}_data and self.original_#{field}_data.delete
           end
         end
 

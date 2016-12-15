@@ -20,6 +20,13 @@ module Hancock::Gallery
 
           field :originable
           field :original
+          field :original_as_image do
+            pretty_value do
+              _value = value.sub(/\>\s*\z/, " style='max-width: 100%; max-height: 100%;'>")
+              "<div style='max-width: 300px; height: 100px;'>#{_value}</div>".html_safe
+            end
+            read_only true
+          end
 
           Hancock::RailsAdminGroupPatch::hancock_cms_group(self, fields)
 

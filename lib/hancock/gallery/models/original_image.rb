@@ -7,8 +7,26 @@ module Hancock::Gallery
       include Hancock::Gallery.orm_specific('OriginalImage')
 
       included do
+        if Hancock.rails4?
+          belongs_to :originable, polymorphic: true
+        else
+          belongs_to :originable, polymorphic: true, optional: true
+        end
 
-        belongs_to :originable, polymorphic: true
+        def original_as_base64(content_type = nil)
+          _original = self.original
+          if _original
+            _data = Base64.encode64(_original.data)
+            _content_type = content_type
+          else
+            _data = ''
+            _content_type = content_type || 'jpg'
+          end
+          "data:#{_content_type};base64,#{_data}"
+        end
+        def original_as_image(content_type = nil)
+          "<img src='#{original_as_base64(content_type)}'>".html_safe
+        end
 
         def self.admin_can_default_actions
           [:show, :read].freeze
