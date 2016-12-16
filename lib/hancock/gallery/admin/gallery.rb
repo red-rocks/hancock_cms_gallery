@@ -30,6 +30,10 @@ module Hancock::Gallery
             read_only true
           end
 
+          if Hancock::Gallery.config.cache_support
+            group :caching, &Hancock::Cache::Admin.caching_block
+          end
+
           nested_set({max_depth: 1, scopes: []})
 
           if defined?(RailsAdminMultipleFileUpload)

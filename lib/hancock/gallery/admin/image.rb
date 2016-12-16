@@ -29,7 +29,9 @@ module Hancock::Gallery
           end
           field :image, :hancock_image
 
-          group :caching, &Hancock::Admin.caching_block
+          if Hancock::Gallery.config.cache_support
+            group :caching, &Hancock::Cache::Admin.caching_block
+          end
 
           nested_set({max_depth: 1, scopes: []})
 

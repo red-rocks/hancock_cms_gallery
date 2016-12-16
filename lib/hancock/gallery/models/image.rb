@@ -11,7 +11,9 @@ module Hancock::Gallery
       #   include Hancock::Gallery::Watermarkable
       # end
 
-      include Hancock::Cacheable
+      if Hancock::Gallery.config.cache_support
+        include Hancock::Cache::Cacheable
+      end
 
       include Hancock::Gallery.orm_specific('Image')
 

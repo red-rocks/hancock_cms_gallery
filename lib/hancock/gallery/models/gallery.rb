@@ -12,6 +12,10 @@ module Hancock::Gallery
       #   include Hancock::Gallery::Watermarkable
       # end
 
+      if Hancock::Gallery.config.cache_support
+        include Hancock::Cache::Cacheable
+      end
+
       include Hancock::Gallery.orm_specific('Gallery')
 
       included do
@@ -43,6 +47,7 @@ module Hancock::Gallery
           # ret += [:multiple_file_upload, :sort_embedded] if Hancock::Gallery.mongoid?
           ret << :model_settings if Hancock::Gallery.config.model_settings_support
           ret << :model_accesses if Hancock::Gallery.config.user_abilities_support
+          ret << :hancock_touch if Hancock::Gallery.config.cache_support
           ret += [:comments, :model_comments] if Hancock::Gallery.config.ra_comments_support
           ret.freeze
         end
@@ -51,6 +56,7 @@ module Hancock::Gallery
           # ret += [:multiple_file_upload, :sort_embedded] if Hancock::Gallery.mongoid?
           ret << :model_settings if Hancock::Gallery.config.model_settings_support
           ret << :model_accesses if Hancock::Gallery.config.user_abilities_support
+          ret << :hancock_touch if Hancock::Gallery.config.cache_support
           ret += [:comments, :model_comments] if Hancock::Gallery.config.ra_comments_support
           ret.freeze
         end
