@@ -28,12 +28,12 @@ module Hancock::Gallery
           "<img src='#{original_as_base64(content_type)}'>".html_safe
         end
 
-        def self.admin_can_default_actions
-          [:show, :read].freeze
-        end
-        def self.manager_can_default_actions
-          [:show, :read].freeze
-        end
+        # def self.admin_can_default_actions
+        #   [:show, :read].freeze
+        # end
+        # def self.manager_can_default_actions
+        #   [:show, :read].freeze
+        # end
         def self.admin_cannot_actions
           [:new, :create, :edit, :update].freeze
         end

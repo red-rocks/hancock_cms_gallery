@@ -39,7 +39,7 @@ module Hancock::Gallery
           ret = [:nested_set]
           # ret += [:multiple_file_upload, :sort_embedded] if Hancock::Gallery.mongoid?
           ret << :model_settings if Hancock::Gallery.config.model_settings_support
-          ret << :model_accesses if Hancock::Gallery.config.user_abilities_support
+          # ret << :model_accesses if Hancock::Gallery.config.user_abilities_support
           ret << :hancock_touch if Hancock::Gallery.config.cache_support
           ret += [:comments, :model_comments] if Hancock::Gallery.config.ra_comments_support
           ret.freeze
