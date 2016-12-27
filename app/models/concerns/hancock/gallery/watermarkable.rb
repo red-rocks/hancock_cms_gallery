@@ -95,6 +95,8 @@ module Hancock::Gallery::Watermarkable
               _temp = Tempfile.new(_old_filename)
               _temp.binmode
               _temp.write _data
+              _dir = File.dirname(self.#{field}.path)
+              FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
               File.unlink(self.#{field}.path) if File.symlink?(self.#{field}.path)
               File.symlink(_temp.path, self.#{field}.path)
               self.#{field} = _temp
