@@ -25,6 +25,8 @@ module Hancock::Gallery::Watermarkable
               _temp = Tempfile.new(_old_filename)
               _temp.binmode
               _temp.write _data
+              _dir = File.dirname(self.#{field}.path)
+              FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
               File.unlink(self.#{field}.path) if File.symlink?(self.#{field}.path)
               File.symlink(_temp.path, self.#{field}.path)
               # self.#{field} = _temp
@@ -32,6 +34,7 @@ module Hancock::Gallery::Watermarkable
               self.class.skip_callback(:save, :after, "original_#{field}_to_db".to_sym)
               auto_rails_admin_jcrop(:#{field})
               self.class.set_callback(:save, :after, "original_#{field}_to_db".to_sym)
+              File.unlink(self.#{field}.path)
               _temp.unlink
             end
           end
@@ -39,17 +42,19 @@ module Hancock::Gallery::Watermarkable
 
         before_#{field}_post_process do
           p_o = self.#{field}.processors.delete :paperclip_optimizer
-          # if p_o
-          #   _processors = self.#{field}.processors.dup
-          #   self.#{field}.processors.clear
-          #   self.#{field}.processors = [:thumbnail, p_o]
-          #   _processors.each do |p|
-          #     self.#{field}.processors << p
-          #   end
-          # end
+          if p_o
+            _processors = self.#{field}.processors.dup
+            self.#{field}.processors.clear
+            self.#{field}.processors << :thumbnail
+            self.#{field}.processors << p_o
+            _processors.each do |p|
+              self.#{field}.processors << p
+            end
+          end
 
           p_w = self.#{field}.processors.delete :watermark
           self.#{field}.processors << p_w if p_w
+          self.#{field}.processors.uniq!
 
           true
         end
@@ -99,13 +104,14 @@ module Hancock::Gallery::Watermarkable
               FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
               File.unlink(self.#{field}.path) if File.symlink?(self.#{field}.path)
               File.symlink(_temp.path, self.#{field}.path)
-              self.#{field} = _temp
-              self.#{field}.instance_write(:file_name, "\#{SecureRandom.hex}\#{File.extname(_old_filename)}")
+              # self.#{field} = _temp
+              # self.#{field}.instance_write(:file_name, "\#{SecureRandom.hex}\#{File.extname(_old_filename)}")
               self.class.skip_callback(:save, :after, "original_#{field}_to_db".to_sym)
               self.#{field}.reprocess!
               self.class.set_callback(:save, :after, "original_#{field}_to_db".to_sym)
               _temp.unlink
-              self.save
+              File.unlink(self.#{field}.path)
+              # self.save
             end
           end
         end
