@@ -46,6 +46,11 @@ if Hancock.active_record?
             return self[:#{name}_file_name] = nil if val == nil
             val = val.to_s
             extension = File.extname(val)[1..-1]
+            if extension.blank?
+              mime_type = MIME::Types[self.#{name}.content_type].first
+              extension = mime_type.extensions.first if mime_type
+              val = [val, extension].join(".") unless extension.blank?
+            end
             file_name = val[0..val.size-extension.size-1]
             self[:#{name}_file_name] = "\#{file_name.filename_to_slug}.\#{extension.filename_to_slug}"
           end

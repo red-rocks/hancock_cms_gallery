@@ -12,7 +12,19 @@ module Hancock::Gallery
           belongs_to :originable, polymorphic: true
         else
           belongs_to :originable, polymorphic: true, optional: true
-        end       
+        end
+
+        after_initialize do
+          unless self.original.blank?
+            _paperclip_obj = Paperclip.io_adapters.for(self.original_as_base64)
+            mime_type = MIME::Types[_paperclip_obj.content_type].first
+            _paperclip_obj.original_filename = "#{_paperclip_obj.original_filename}.#{mime_type.extensions.first}" if mime_type
+            self.image = _paperclip_obj
+            self.original = nil
+            self.save
+          end
+          self
+        end
 
         def original_as_base64(content_type = nil)
           _original = self.original
