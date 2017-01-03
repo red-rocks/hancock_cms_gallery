@@ -18,6 +18,17 @@ module Hancock::Gallery::Watermarkable
           if File.exists?(self.#{field}.path)
             auto_rails_admin_jcrop(:#{field})
 
+          # original file in object`s original_image as file
+          elsif self.original_#{field}_data and !self.original_#{field}_data.image.blank?
+            _dir = File.dirname(self.#{field}.path)
+            FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
+            File.unlink(self.#{field}.path) if File.symlink?(self.#{field}.path)
+            File.symlink(self.original_#{field}_data.image.path, self.#{field}.path)
+            self.class.skip_callback(:save, :after, "save_original_#{field}".to_sym)
+            self.#{field}.reprocess!
+            self.class.set_callback(:save, :after, "save_original_#{field}".to_sym)
+            File.unlink(self.#{field}.path)
+
           elsif (_data = self.original_#{field})
             _old_filename = self.#{field}_file_name
             if _data
@@ -45,7 +56,7 @@ module Hancock::Gallery::Watermarkable
           if p_o
             _processors = self.#{field}.processors.dup
             self.#{field}.processors.clear
-            self.#{field}.processors << :thumbnail
+            # self.#{field}.processors << :thumbnail
             self.#{field}.processors << p_o
             _processors.each do |p|
               self.#{field}.processors << p
@@ -69,7 +80,7 @@ module Hancock::Gallery::Watermarkable
           original_#{field}_data and original_#{field}_data.original_as_image(self.#{field}_content_type)
         end
 
-        after_save :original_#{field}_to_db
+        # after_save :original_#{field}_to_db
         def original_#{field}_to_db
           unless self.#{field}.blank?
             if File.exists?(self.#{field}.path)
@@ -78,6 +89,7 @@ module Hancock::Gallery::Watermarkable
                 _original = #{original_image_class_name}.new
                 _original.originable = self
               end
+              _original.image = nil
               _original.original = BSON::Binary.new(File.binread(self.#{field}.path))
               if _original.save
                 File.unlink(self.#{field}.path)
@@ -88,11 +100,45 @@ module Hancock::Gallery::Watermarkable
           end
         end
 
+        after_save :save_original_#{field}
+        def save_original_#{field}
+          unless self.#{field}.blank?
+            if File.exists?(self.#{field}.path)
+              _original = self.original_#{field}_data
+              unless _original
+                _original = #{original_image_class_name}.new
+                _original.originable = self
+              end
+              _original.image = self.#{field}
+              _original.original = nil
+              if _original.save
+                File.unlink(self.#{field}.path) if File.exists?(self.#{field}.path)
+              end
+            end
+          else
+            self.original_#{field}_data and self.original_#{field}_data.delete
+          end
+        end
+
         def reprocess_#{field}
           return if self.#{field}.blank?
 
+          # original file in object
           if File.exists?(self.#{field}.path)
             self.#{field}.reprocess!
+
+          # original file in object`s original_image as file
+          elsif self.original_#{field}_data and !self.original_#{field}_data.image.blank?
+            _dir = File.dirname(self.#{field}.path)
+            FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
+            File.unlink(self.#{field}.path) if File.symlink?(self.#{field}.path)
+            File.symlink(self.original_#{field}_data.image.path, self.#{field}.path)
+            self.class.skip_callback(:save, :after, "save_original_#{field}".to_sym)
+            self.#{field}.reprocess!
+            self.class.set_callback(:save, :after, "save_original_#{field}".to_sym)
+            File.unlink(self.#{field}.path)
+
+          # original file in object`s original_image as db field
           elsif (_data = self.original_#{field})
             _old_filename = self.#{field}_file_name
             if _data

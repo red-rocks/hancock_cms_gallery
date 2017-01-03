@@ -4,6 +4,7 @@ module Hancock::Gallery
       extend ActiveSupport::Concern
 
       include Hancock::Model
+      include Hancock::Gallery::Paperclipable
       include Hancock::Gallery.orm_specific('OriginalImage')
 
       included do
@@ -11,7 +12,7 @@ module Hancock::Gallery
           belongs_to :originable, polymorphic: true
         else
           belongs_to :originable, polymorphic: true, optional: true
-        end
+        end       
 
         def original_as_base64(content_type = nil)
           _original = self.original

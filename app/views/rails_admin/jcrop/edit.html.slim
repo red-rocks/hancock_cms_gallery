@@ -7,6 +7,8 @@
   = form_tag nil, @form_options.merge({class: "form-horizontal denser"}) do
     - if File.exists?(@object.send(@field).path) 
       = image_tag @object.send(@field).url, @image_tag_options
+    - elsif @object.respond_to?("original_#{@field}_data") and !@object.send("original_#{@field}_data").image.blank?
+      = image_tag @object.send("original_#{@field}_data").image.url, @image_tag_options
     - elsif @object.respond_to?("original_#{@field}_base64".to_sym)
       = image_tag @object.send("original_#{@field}_base64".to_sym), @image_tag_options
       

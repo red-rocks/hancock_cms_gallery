@@ -48,6 +48,21 @@ module RailsAdmin
           @image_tag_options[:style] << "border: 1px solid #AAA !important;"
         end
 
+      # original file in object`s original_image as file
+      elsif @object.try("original_#{@field}_data") and !@object.send("original_#{@field}_data").image.blank?
+        @image_tag_options[:'data-geometry'] = geometry(@object.send("original_#{@field}_data").image.path).join(",")
+
+        if @fit_image_geometry
+          fit_image_geometry = fit_image_geometry(@object.send("original_#{@field}_data").image.path)
+
+          @form_options[:'style'] = "margin-left: #{375 - (fit_image_geometry[0]/2) - 15}px;"
+
+          @image_tag_options[:style] = ""
+          @image_tag_options[:style] << "width: #{fit_image_geometry[0]}px !important;"
+          @image_tag_options[:style] << "height: #{fit_image_geometry[1]}px !important;"
+          @image_tag_options[:style] << "border: 1px solid #AAA !important;"
+        end
+
       elsif @object.respond_to?("original_#{@field}")
         _data = @object.send("original_#{@field}")
         if _data
@@ -67,6 +82,19 @@ module RailsAdmin
       if File.exists?(@object.send(params[:crop_field]).path)
         @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
 
+      # original file in object`s original_image as file
+    elsif @object.try("original_#{params[:crop_field]}_data") and !@object.send("original_#{params[:crop_field]}_data").image.blank?
+        _dir = File.dirname(@object.send(params[:crop_field]).path)
+        FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
+        File.unlink(@object.send(params[:crop_field]).path) if File.symlink?(@object.send(params[:crop_field]).path)
+        File.symlink(@object.send("original_#{params[:crop_field]}_data").image.path, @object.send(params[:crop_field]).path)
+        @object.class.skip_callback(:save, :after, "save_original_#{params[:crop_field]}".to_sym)
+        @object.save
+        @object.class.set_callback(:save, :after, "save_original_#{params[:crop_field]}".to_sym)
+        @object.send("#{params[:crop_field]}_autocropped=", true)
+        @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
+        File.unlink(@object.send(params[:crop_field]).path) if File.exists?(@object.send(params[:crop_field]).path)
+
       elsif @object.try("original_#{params[:crop_field]}")
         _old_filename = @object.send("#{params[:crop_field]}_file_name")
         _data = @object.send("original_#{params[:crop_field]}")
@@ -75,6 +103,8 @@ module RailsAdmin
           _temp = Tempfile.new(_old_filename)
           _temp.binmode
           _temp.write _data
+          _dir = File.dirname(@object.send(params[:crop_field]).path)
+          FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
           File.unlink(@object.send(params[:crop_field]).path) if File.symlink?(@object.send(params[:crop_field]).path)
           File.symlink(_temp.path, @object.send(params[:crop_field]).path)
           # @object.send("#{params[:crop_field]}=", _temp)
@@ -82,6 +112,7 @@ module RailsAdmin
           @object.class.skip_callback(:save, :after, "original_#{params[:crop_field]}_to_db".to_sym)
           @object.save
           @object.class.set_callback(:save, :after, "original_#{params[:crop_field]}_to_db".to_sym)
+          @object.send("#{params[:crop_field]}_autocropped=", true)
           @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
           _temp.unlink
         end
