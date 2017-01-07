@@ -18,6 +18,8 @@ module Hancock::Gallery
 
     attr_accessor :original_image_hash_secret
 
+    attr_accessor :default_convert_options
+
     def initialize
       @localize = Hancock.config.localize
 
@@ -29,6 +31,8 @@ module Hancock::Gallery
       @watermark_support = defined?(PaperclipWatermark)
 
       @original_image_hash_secret = Rails.application.secrets.secret_key_base
+
+      @default_convert_options = {all: ["-quality", "75", "-strip"]}
     end
   end
 end

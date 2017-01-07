@@ -26,7 +26,7 @@ if Hancock.active_record?
             opts[:processors].uniq!
           end
 
-          opts[:convert_options] = {all: ["-quality", "75", "-strip"]} if opts[:convert_options].blank?
+          opts[:convert_options] = Hancock::Gallery.config.default_convert_options if opts[:convert_options].blank?
 
           if opts[:styles].blank?
             styles_method_name = "#{name}_styles"
@@ -65,6 +65,11 @@ if Hancock.active_record?
             else
               #{name}.url(opts)
             end
+          end
+
+          def reprocess_#{name}
+            return if self.#{name}.blank?
+            self.#{name}.reprocess! if File.exists?(self.#{name}.path)
           end
         EVAL
         if defined?(::PaperclipOptimizer)
