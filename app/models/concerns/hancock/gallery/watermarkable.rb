@@ -5,6 +5,7 @@ module Hancock::Gallery::Watermarkable
     def paperclip_with_watermark(field = :image, original_image_class_name = "Hancock::Gallery::OriginalImage")
 
       attr_accessor "#{field}_autocropped".to_sym
+      attr_accessor "process_watermark_#{field}".to_sym
 
       hancock_cms_attached_file field, processors: [:watermark]
       # field "original_#{field}", type: BSON::Binary
@@ -64,8 +65,11 @@ module Hancock::Gallery::Watermarkable
           end
 
           p_w = self.#{field}.processors.delete :watermark
-          self.#{field}.processors << p_w if p_w
+          if p_w and self.process_watermark_#{field}
+            self.#{field}.processors << p_w 
+          end
           self.#{field}.processors.uniq!
+
 
           true
         end

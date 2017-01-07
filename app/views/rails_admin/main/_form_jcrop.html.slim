@@ -1,0 +1,47 @@
+- if field.jcrop_options.is_a?(Hash)
+  - rails_admin_jcrop_options = field.jcrop_options.to_json
+- else
+  - _method = field.jcrop_options.to_sym
+  - if form.object.respond_to?(_method)
+    - rails_admin_jcrop_options = form.object.send(field.jcrop_options.to_sym).to_json
+  - else
+    - rails_admin_jcrop_options = {}
+
+= stylesheet_link_tag 'rails_admin/jquery.Jcrop'
+= stylesheet_link_tag 'rails_admin/ra.jcrop'
+= javascript_include_tag 'rails_admin/jquery.Jcrop'
+= javascript_include_tag 'rails_admin/ra.jcrop'
+
+- file = form.object.send(field.method_name).presence
+
+- _add_class = field.pretty_value ? "jcrop_data_value" : ""
+.toggle{class="#{_add_class}" style=('display:none;' if file and field.delete_method and form.object.send(field.delete_method) == '1')}
+  - if value = field.pretty_value
+    .preview
+      .title_link_hint= "Обрезать"
+      .image_block
+        = value
+  = form.file_field(field.name, field.html_attributes.reverse_merge({data: {fileupload: true, rails_admin_jcrop_options: rails_admin_jcrop_options } }))
+
+  - model_name = form.object.class.to_param.gsub("::", "~").underscore
+  - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
+  - link_data = {link: url, thumb: field.thumb_method || "original"}
+  = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
+
+  - if field.process_watermark_toggler
+    label{style='display: block;'}
+      - _html_attributes = {checked: field.process_watermark_default}
+      span{style='float: left'}= form.check_box field.process_watermark_toggler_method, _html_attributes
+      div{style='margin-left: 35px; line-height: 40px;'} Добавлять водяной знак?
+
+
+- if field.optional? and field.errors.blank? and file and field.delete_method
+  - onclick = "$(this).siblings('[type=checkbox]').click(); $(this).siblings('.toggle').toggle('slow'); jQuery(this).toggleClass('btn-danger btn-info'); return false;"
+  br
+  = link_to "#", data: {toggle:'button'}, onclick: onclick, class: "btn btn-info" do
+    i.icon-white.icon-trash
+    = "#{I18n.t('admin.actions.delete.menu').capitalize} #{field.method_name}"
+
+  = form.check_box field.delete_method, style: 'display:none;'
+- if field.cache_method
+  = form.hidden_field field.cache_method
