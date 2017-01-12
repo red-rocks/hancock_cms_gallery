@@ -17,7 +17,8 @@ module RailsAdmin
           end
 
           register_instance_option :process_watermark_toggler do
-            bindings[:object].send(name).processors.include?(:watermark) and bindings[:object].respond_to?(process_watermark_toggler_method)
+            # bindings[:object].send(name).processors.include?(:watermark) and bindings[:object].respond_to?(process_watermark_toggler_method)
+            bindings[:object].respond_to?(process_watermark_toggler_method)
           end
 
 

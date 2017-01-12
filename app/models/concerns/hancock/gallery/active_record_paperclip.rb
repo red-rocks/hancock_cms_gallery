@@ -19,11 +19,22 @@ if Hancock.active_record?
         end
 
         if is_image
-          if defined?(::PaperclipOptimizer)
-            opts[:processors] ||= []
-            opts[:processors] << :paperclip_optimizer
-            opts[:processors].flatten!
-            opts[:processors].uniq!
+          cattr_accessor "#{name}_default_processors".to_sym
+          instance_eval <<-EVAL
+            self.#{name}_default_processors = []
+            if defined?(::PaperclipOptimizer)
+              self.#{name}_default_processors << :paperclip_optimizer
+              self.#{name}_default_processors.flatten!
+              self.#{name}_default_processors.uniq!
+            end
+          EVAL
+          unless opts[:processors].is_a?(Proc)
+            if defined?(::PaperclipOptimizer)
+              opts[:processors] ||= []
+              opts[:processors] << :paperclip_optimizer
+              opts[:processors].flatten!
+              opts[:processors].uniq!
+            end
           end
 
           opts[:convert_options] = Hancock::Gallery.config.default_convert_options if opts[:convert_options].blank?

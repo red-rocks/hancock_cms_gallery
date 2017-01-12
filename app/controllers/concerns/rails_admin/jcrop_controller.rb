@@ -79,11 +79,13 @@ module RailsAdmin
     end
 
     def update
+      @object.try("process_watermark_#{params[:crop_field]}=", params["process_watermark_#{params[:crop_field]}".to_sym])
+
       if File.exists?(@object.send(params[:crop_field]).path)
         @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
 
       # original file in object`s original_image as file
-    elsif @object.try("original_#{params[:crop_field]}_data") and !@object.send("original_#{params[:crop_field]}_data").image.blank?
+      elsif @object.try("original_#{params[:crop_field]}_data") and !@object.send("original_#{params[:crop_field]}_data").image.blank?
         _dir = File.dirname(@object.send(params[:crop_field]).path)
         FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
         File.unlink(@object.send(params[:crop_field]).path) if File.symlink?(@object.send(params[:crop_field]).path)

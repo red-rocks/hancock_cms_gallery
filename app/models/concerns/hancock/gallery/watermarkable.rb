@@ -7,7 +7,26 @@ module Hancock::Gallery::Watermarkable
       attr_accessor "#{field}_autocropped".to_sym
       attr_accessor "process_watermark_#{field}".to_sym
 
-      hancock_cms_attached_file field, processors: [:watermark]
+      hancock_cms_attached_file field, processors: -> (instance) {
+        _processors = (instance.try("#{field}_default_processors") || []).dup
+        p_o = _processors.delete :paperclip_optimizer
+        if p_o
+          __processors = _processors.dup.uniq
+          _processors.clear
+          # _processors << :thumbnail
+          _processors << p_o
+          __processors.each do |p|
+            _processors << p
+          end
+        end
+
+        # p_w = _processors.delete :watermark
+        if ['1', 'true', 't', 'yes', 'y', true, 1, :true, :yes].include?(instance.try("process_watermark_#{field}"))
+          _processors << :watermark
+        end
+        _processors.uniq
+      }
+
       # field "original_#{field}", type: BSON::Binary
       has_one "original_#{field}_data", as: :originable, class_name: original_image_class_name, dependent: :destroy
 
@@ -52,27 +71,27 @@ module Hancock::Gallery::Watermarkable
           end
         end
 
-        before_#{field}_post_process do
-          p_o = self.#{field}.processors.delete :paperclip_optimizer
-          if p_o
-            _processors = self.#{field}.processors.dup
-            self.#{field}.processors.clear
-            # self.#{field}.processors << :thumbnail
-            self.#{field}.processors << p_o
-            _processors.each do |p|
-              self.#{field}.processors << p
-            end
-          end
-
-          p_w = self.#{field}.processors.delete :watermark
-          if p_w and self.process_watermark_#{field}
-            self.#{field}.processors << p_w 
-          end
-          self.#{field}.processors.uniq!
-
-
-          true
-        end
+        # before_#{field}_post_process do
+        #   p_o = self.#{field}.processors.delete :paperclip_optimizer
+        #   if p_o
+        #     _processors = self.#{field}.processors.dup
+        #     self.#{field}.processors.clear
+        #     # self.#{field}.processors << :thumbnail
+        #     self.#{field}.processors << p_o
+        #     _processors.each do |p|
+        #       self.#{field}.processors << p
+        #     end
+        #   end
+        #
+        #   p_w = self.#{field}.processors.delete :watermark
+        #   if p_w and self.process_watermark_#{field}
+        #     self.#{field}.processors << p_w
+        #   end
+        #   self.#{field}.processors.uniq!
+        #
+        #
+        #   true
+        # end
 
         def original_#{field}
           original_#{field}_data and original_#{field}_data.original

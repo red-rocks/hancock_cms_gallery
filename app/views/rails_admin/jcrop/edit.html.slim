@@ -12,6 +12,13 @@
     - elsif @object.respond_to?("original_#{@field}_base64".to_sym)
       = image_tag @object.send("original_#{@field}_base64".to_sym), @image_tag_options
       
+      
+    - if @object.respond_to?("process_watermark_#{@field}")
+      label{style='display: block; line-height: 40px;'}
+        - _html_attributes = {class: 'form-control'}
+        span{style='float: left'}= check_box_tag "process_watermark_#{@field}", true, _html_attributes
+        div{style='margin-left: 15px; '} Добавлять водяной знак?
+        
     = hidden_field_tag :crop_x
     = hidden_field_tag :crop_y
     = hidden_field_tag :crop_w
