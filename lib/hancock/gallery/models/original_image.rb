@@ -14,17 +14,36 @@ module Hancock::Gallery
           belongs_to :originable, polymorphic: true, optional: true
         end
 
-        after_initialize do
+        def from_db_to_fs
           unless self.original.blank?
             _paperclip_obj = Paperclip.io_adapters.for(self.original_as_base64)
             mime_type = MIME::Types[_paperclip_obj.content_type].first
             _paperclip_obj.original_filename = "#{_paperclip_obj.original_filename}.#{mime_type.extensions.first}" if mime_type
             self.image = _paperclip_obj
             self.original = nil
-            self.save
+            return self
           end
-          self
+          return false
         end
+        def from_db_to_fs!
+          self.from_db_to_fs and self.save
+        end
+
+        def relocate_original
+          unless File.exists? self.image.path
+            _path = self.image.path
+            _old_file = Dir[File.dirname(self.image.path) + "/*#{File.extname(self.image.path)}"].first
+            if _old_file
+              return File.rename _old_file, _path
+            end
+            return nil
+          end
+          return false
+        end
+        def relocate_original!
+          self.relocate_original and self.image.reprocess!
+        end
+
 
         def original_as_base64(content_type = nil)
           _original = self.original
