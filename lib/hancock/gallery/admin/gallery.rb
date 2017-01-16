@@ -10,6 +10,7 @@ module Hancock::Gallery
 
         Proc.new {
           navigation_label(!nav_label.blank? ? nav_label : I18n.t('hancock.gallery'))
+
           field :enabled, :toggle do
             searchable false
           end

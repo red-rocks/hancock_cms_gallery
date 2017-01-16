@@ -17,6 +17,13 @@ module Hancock::Gallery::Decorators
       # end
 
       ############# rails_admin ##############
+      # def self.rails_admin_name_synonyms
+      #   ''.freeze #super
+      # end
+      # def self.rails_admin_navigation_icon
+      #   ''.freeze
+      # end
+      #
       # def self.rails_admin_add_fields
       #   [] #super
       # end

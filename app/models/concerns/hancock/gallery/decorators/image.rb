@@ -22,6 +22,13 @@ module Hancock::Gallery::Decorators
       # end
 
       ############# rails_admin ##############
+      # def self.rails_admin_name_synonyms
+      #   "Photo Картинки Картинка Изображение Изображения".freeze
+      # end
+      # def self.rails_admin_navigation_icon
+      #   'icon-picture'.freeze
+      # end
+      #
       # def self.rails_admin_add_fields
       #   [] #super
       # end
