@@ -143,6 +143,11 @@ module Hancock::Gallery::Watermarkable
           end
         end
 
+        def reprocess_#{field}_with_watermark
+          self.process_watermark_#{field} = true
+          self.reprocess_#{field}
+        end
+
         def reprocess_#{field}
           return if self.#{field}.blank?
 

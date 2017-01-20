@@ -28,7 +28,7 @@
   - link_data = {link: url, thumb: field.thumb_method || "original"}
   = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
 
-  - if field.process_watermark_toggler
+  - if field.try(:process_watermark_toggler)
     label{style='display: block;'}
       - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
       span{style='float: left'}= form.check_box field.process_watermark_toggler_method, _html_attributes
