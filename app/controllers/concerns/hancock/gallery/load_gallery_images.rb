@@ -48,7 +48,7 @@ module Hancock::Gallery::LoadGalleryImages
 
   def hancock_gallery_load_gallery_images
     if hancock_gallery_gallery_images_load_all_the_rest and params[:page].to_i > 1
-      hancock_gallery_gallery_image_scope.skip(hancock_gallery_gallery_images_per_page).page.all
+      hancock_gallery_gallery_image_scope.page.skip(hancock_gallery_gallery_images_per_page).all
     else
       hancock_gallery_gallery_image_scope.page(params[:page]).per(hancock_gallery_gallery_images_per_page)
     end
