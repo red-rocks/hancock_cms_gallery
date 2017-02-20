@@ -8,6 +8,10 @@ module RailsAdmin
           # Register field type for the type loader
           RailsAdmin::Config::Fields::Types::register(self)
 
+          register_instance_option(:partial) do
+            :form_hancock_image
+          end
+
           register_instance_option :process_watermark_toggler_method do
             "process_watermark_#{name}"
           end
@@ -31,7 +35,7 @@ module RailsAdmin
           end
 
           register_instance_option :help do
-            "SVG не изменяется."
+            "SVG не изменяется. #{(required? ? I18n.translate('admin.form.required') : I18n.translate('admin.form.optional')) + '. '}"
           end
 
           register_instance_option :jcrop_options do
