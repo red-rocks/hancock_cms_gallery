@@ -16,11 +16,16 @@ if Hancock.mongoid?
       require 'mongoid-paperclip'
     end
   rescue LoadError
-    raise 'Add mongoid-paperclip or glebtv-mongoid-paperclip'
+    raise 'Add mongoid-paperclip or glebtv-mongoid-paperclip in Gemfile'
   end
 elsif Hancock.active_record?
-  require 'paperclip'
+  begin
+    require 'paperclip'
+  rescue LoadError
+    raise 'Add paperclip in Gemfile'
+  end
 end
+require 'hancock/gallery/paperclip_patch'
 # require "image_optim"
 # require "paperclip-optimizer"
 

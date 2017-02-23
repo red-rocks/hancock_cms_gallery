@@ -67,14 +67,15 @@ if Hancock.active_record?
           end
 
           def #{name}_svg?
-            #{name}_content_type =~ /svg/
+            # !!(#{name}_content_type =~ /svg/)
+            #{name}.svg?
           end
 
-          def #{name}_url(opts)
+          def #{name}_url(style=:original, opts = {})
             if #{name}_svg?
               #{name}.url
             else
-              #{name}.url(opts)
+              #{name}.url(style, opts)
             end
           end
 
