@@ -1,12 +1,4 @@
-# unless defined?(Hancock) && Hancock.respond_to?(:orm) && [:active_record, :mongoid].include?(Hancock.orm)
-#   puts "please use hancock_cms_mongoid or hancock_cms_activerecord"
-#   puts "also: please use hancock_cms_news_mongoid or hancock_cms_news_activerecord and not hancock_cms_news directly"
-#   exit 1
-# end
-
 require "hancock/gallery/version"
-
-# require 'hancock_cms'
 
 if Hancock.mongoid?
   begin
@@ -16,7 +8,7 @@ if Hancock.mongoid?
       require 'mongoid-paperclip'
     end
   rescue LoadError
-    raise 'Add mongoid-paperclip or glebtv-mongoid-paperclip in Gemfile'
+    raise 'Add glebtv-mongoid-paperclip (*recommended*) or mongoid-paperclip or  in Gemfile'
   end
 elsif Hancock.active_record?
   begin
