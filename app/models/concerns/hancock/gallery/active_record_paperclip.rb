@@ -20,14 +20,14 @@ if Hancock.active_record?
 
         if is_image
           cattr_accessor "#{name}_default_processors".to_sym
-          instance_eval <<-EVAL
+          instance_eval <<-RUBY
             self.#{name}_default_processors = []
             if defined?(::PaperclipOptimizer)
               self.#{name}_default_processors << :paperclip_optimizer
               self.#{name}_default_processors.flatten!
               self.#{name}_default_processors.uniq!
             end
-          EVAL
+          RUBY
           unless opts[:processors].is_a?(Proc)
             if defined?(::PaperclipOptimizer)
               opts[:processors] ||= []
@@ -51,7 +51,7 @@ if Hancock.active_record?
         # validates_attachment name, content_type: content_type unless content_type.blank?
         validates_attachment_content_type name, content_type: /\Aimage\/.*\Z/ if is_image
 
-        class_eval <<-EVAL
+        class_eval <<-RUBY
           def #{name}_file_name=(val)
             return self[:#{name}_file_name] = ""  if val == ""
             return self[:#{name}_file_name] = nil if val == nil
@@ -83,32 +83,36 @@ if Hancock.active_record?
             return if self.#{name}.blank?
             self.#{name}.reprocess! if File.exists?(self.#{name}.path)
           end
-        EVAL
+
+          def self.reprocess_all_#{name.to_s.pluralize}
+            self.all.map(&:reprocess_#{name})
+          end
+        RUBY
         if defined?(::PaperclipOptimizer)
-          class_eval <<-EVAL
+          class_eval <<-RUBY
             before_#{name}_post_process do
               p_o = self.#{name}.processors.delete :paperclip_optimizer
               self.#{name}.processors << p_o if p_o
               true
             end
-          EVAL
+          RUBY
         end
         jcrop_options ||= {}
         if jcrop_options
-          class_eval <<-EVAL
+          class_eval <<-RUBY
             def #{name}_jcrop_options
               #{jcrop_options}
             end
-          EVAL
+          RUBY
         end
         if styles_method_name
-          class_eval <<-EVAL
+          class_eval <<-RUBY
             def #{styles_method_name}
               {
                 thumb: '128x128'
               }
             end
-          EVAL
+          RUBY
         end
 
       end

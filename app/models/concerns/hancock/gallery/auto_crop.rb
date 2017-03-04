@@ -12,7 +12,7 @@ module Hancock::Gallery::AutoCrop
       self.send("#{field}_default_max_crop_area=".to_sym, crop_area)
       self.send("#{field}_default_auto_crop_method=".to_sym, _default_method.to_sym)
 
-      class_eval <<-EVAL
+      class_eval <<-RUBY
         after_save :#{field}_auto_rails_admin_jcrop
         def #{field}_auto_rails_admin_jcrop
           auto_rails_admin_jcrop(:#{field})
@@ -79,7 +79,7 @@ module Hancock::Gallery::AutoCrop
             end
           end
         end
-      EVAL
+      RUBY
     end
 
   end
