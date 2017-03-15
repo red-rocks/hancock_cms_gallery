@@ -15,6 +15,9 @@ module RailsAdmin
           register_instance_option :process_watermark_toggler_method do
             "process_watermark_#{name}"
           end
+          register_instance_option :cancel_perform_autocrop_method do
+            "#{name}_autocropped" if bindings[:object].respond_to?("#{name}_autocropped")
+          end
 
           register_instance_option :process_watermark_default do
             true
@@ -28,7 +31,7 @@ module RailsAdmin
 
           register_instance_option :allowed_methods do
             if process_watermark_toggler
-              [method_name, delete_method, cache_method, process_watermark_toggler_method].compact
+              [method_name, delete_method, cache_method, process_watermark_toggler_method, cancel_perform_autocrop_method].compact
             else
               [method_name, delete_method, cache_method].compact
             end
@@ -40,6 +43,17 @@ module RailsAdmin
 
           register_instance_option :jcrop_options do
             "#{name}_jcrop_options".to_sym
+          end
+
+          register_instance_option :svg? do
+            (url = resource_url.to_s) && url.split('.').last =~ /svg/i
+          end
+          register_instance_option :thumb_method do
+            if svg?
+              :original
+            else
+              @thumb_method ||= ((styles = bindings[:object].send(name).styles.keys).find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
+            end
           end
 
         end

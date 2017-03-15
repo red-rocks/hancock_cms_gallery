@@ -4,7 +4,6 @@ module Hancock::Gallery::Watermarkable
   module ClassMethods
     def paperclip_with_watermark(field = :image, original_image_class_name = "Hancock::Gallery::OriginalImage")
 
-      attr_accessor "#{field}_autocropped".to_sym
       attr_accessor "process_watermark_#{field}".to_sym
 
       hancock_cms_attached_file field, processors: -> (instance) {

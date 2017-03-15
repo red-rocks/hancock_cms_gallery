@@ -19,6 +19,8 @@ if Hancock.active_record?
         end
 
         if is_image
+          attr_accessor "#{name}_autocropped".to_sym
+
           cattr_accessor "#{name}_default_processors".to_sym
           instance_eval <<-RUBY
             self.#{name}_default_processors = []
