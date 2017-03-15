@@ -118,6 +118,23 @@ if Hancock.mongoid?
         end
 
       end
+    
+
+      def paperclip_style_aliases_for(name, opts = {})
+        name = name.to_sym
+        _styles = opts[:styles]
+        _styles ||= self.send("#{name}_styles") if self.respond_to?("#{name}_styles")
+        _styles = _styles.keys if _styles.is_a?(Hash)
+        _styles.each do |_style|
+          class_eval <<-RUBY
+            def #{name}_url_#{_style}
+              #{name}.url(#{_style.to_sym})
+            end
+          RUBY
+        end
+
+      end
+
     end
   end
 end
