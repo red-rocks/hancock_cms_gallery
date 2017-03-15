@@ -31,9 +31,9 @@ module RailsAdmin
 
           register_instance_option :allowed_methods do
             if process_watermark_toggler
-              [method_name, delete_method, cache_method, process_watermark_toggler_method, cancel_perform_autocrop_method].compact
+              [method_name, delete_method, cache_method, cancel_perform_autocrop_method, process_watermark_toggler_method].compact
             else
-              [method_name, delete_method, cache_method].compact
+              [method_name, delete_method, cache_method, cancel_perform_autocrop_method].compact
             end
           end
 

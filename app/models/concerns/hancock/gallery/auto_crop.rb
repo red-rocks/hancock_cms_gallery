@@ -8,6 +8,7 @@ module Hancock::Gallery::AutoCrop
       crop_area = [_width, _height].compact
       _default_method = opts.delete(:default_method) || :default_crop_params_for_center
 
+      attr_accessor "#{field}_autocropped".to_sym
       cattr_accessor "#{field}_default_max_crop_area".to_sym, "#{field}_default_auto_crop_method".to_sym
       self.send("#{field}_default_max_crop_area=".to_sym, crop_area)
       self.send("#{field}_default_auto_crop_method=".to_sym, _default_method.to_sym)
@@ -15,6 +16,9 @@ module Hancock::Gallery::AutoCrop
       class_eval <<-RUBY
         after_save :#{field}_auto_rails_admin_jcrop
         def #{field}_auto_rails_admin_jcrop
+          self.#{field}_autocropped = false if self.#{field}_autocropped == "0"
+          return if self.#{field}.blank? or !self.#{field}_updated_at_changed? or self.#{field}_autocropped
+          self.#{field}_autocropped = true
           auto_rails_admin_jcrop(:#{field})
         end
 
