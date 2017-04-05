@@ -22,20 +22,24 @@ module Hancock::Gallery::AutoCrop
           auto_rails_admin_jcrop(:#{field})
         end
 
+        def #{field}_style_for_autocrop(_styles = #{field}_styles)
+          _methods = [:big, :main, :standard]
+          _styles = _styles.call(#{field}) if _styles.respond_to?(:call)
+          _style = nil
+          _methods.each do |m|
+            _style = _styles[m]
+            _style = _style[:geometry] if _style and _style.is_a?(Hash)
+            break if !_style.blank? and _style
+          end
+          _style
+        end
+
         def #{field}_default_crop_params
           if self.#{field} and !self.#{field}_file_name.blank?
             _default_max_crop_area = self.#{field}_default_max_crop_area
-            if _default_max_crop_area or self.respond_to?(:#{field}_styles) and (_#{field}_styles = self.#{field}_styles)
+            if _default_max_crop_area or self.respond_to?(:#{field}_styles)
               if _default_max_crop_area.blank?
-                _methods = [:big, :main, :standard]
-                _#{field}_styles = _#{field}_styles.call(#{field}) if _#{field}_styles.respond_to?(:call)
-                _style = nil
-                _methods.each do |m|
-                  _style = _#{field}_styles[m]
-                  _style = _style[:geometry] if _style and _style.is_a?(Hash)
-                  break if !_style.blank? and _style
-                end
-                if _style
+                if _style = #{field}_style_for_autocrop
                   # sizes = _style.match(/^(?<width>[\d\.]+)?(x(?<height>[\d\.]+))?/)
                   # need_width = sizes[:width].to_f
                   # need_height = sizes[:height].to_f

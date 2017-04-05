@@ -38,9 +38,11 @@
       
 - if field.cancel_perform_autocrop_method
   label{style='display: block;'}
-    - _html_attributes = {class: 'form-control'}
-    span{style='float: left'}= form.check_box field.cancel_perform_autocrop_method, _html_attributes
-    div{style='margin-left: 35px; line-height: 40px;'} Отменить автоматическую обрезку
+    - _html_attributes = {class: 'form-control', checked: true}
+    span{style='float: left'}= form.check_box field.cancel_perform_autocrop_method, _html_attributes, "0", "1"
+    div{style='margin-left: 35px; line-height: 40px;'}
+      - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
+      = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
 
 
 - if field.optional? and field.errors.blank? and file and field.delete_method
