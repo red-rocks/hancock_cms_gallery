@@ -36,10 +36,10 @@
       div{style='margin-left: 35px; line-height: 40px;'} Добавлять водяной знак?
       
       
-- if field.cancel_perform_autocrop_method
+- if field.perform_autocrop_method
   label{style='display: block;'}
-    - _html_attributes = {class: 'form-control', checked: true}
-    span{style='float: left'}= form.check_box field.cancel_perform_autocrop_method, _html_attributes, "0", "1"
+    - _html_attributes = {class: 'form-control', checked: field.perform_autocrop_default}
+    span{style='float: left'}= form.check_box field.perform_autocrop_method, _html_attributes, "0", "1"
     div{style='margin-left: 35px; line-height: 40px;'}
       - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
       = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"

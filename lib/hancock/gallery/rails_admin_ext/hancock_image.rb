@@ -15,8 +15,11 @@ module RailsAdmin
           register_instance_option :process_watermark_toggler_method do
             "process_watermark_#{name}"
           end
-          register_instance_option :cancel_perform_autocrop_method do
+          register_instance_option :perform_autocrop_method do
             "#{name}_autocropped" if bindings[:object].respond_to?("#{name}_autocropped")
+          end
+          register_instance_option :perform_autocrop_default do
+            true
           end
 
           register_instance_option :process_watermark_default do
@@ -31,9 +34,9 @@ module RailsAdmin
 
           register_instance_option :allowed_methods do
             if process_watermark_toggler
-              [method_name, delete_method, cache_method, cancel_perform_autocrop_method, process_watermark_toggler_method].compact
+              [method_name, delete_method, cache_method, perform_autocrop_method, process_watermark_toggler_method].compact
             else
-              [method_name, delete_method, cache_method, cancel_perform_autocrop_method].compact
+              [method_name, delete_method, cache_method, perform_autocrop_method].compact
             end
           end
 
