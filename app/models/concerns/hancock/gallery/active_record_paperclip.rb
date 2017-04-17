@@ -120,12 +120,19 @@ if Hancock.active_record?
       def paperclip_style_aliases_for(name, opts = {})
         name = name.to_sym
         _styles = opts[:styles]
-        _styles ||= self.send("#{name}_styles") if self.respond_to?("#{name}_styles")
+        if _styles.nil?
+          if self.respond_to?("#{name}_styles")
+            _styles = self.send("#{name}_styles")
+          elsif (_obj = self.new).respond_to?("#{name}_styles")
+            _styles = _obj.send("#{name}_styles")
+          end
+        end
         _styles = _styles.keys if _styles.is_a?(Hash)
+        return if _styles.blank?
         _styles.each do |_style|
           class_eval <<-RUBY
             def #{name}_url_#{_style}
-              #{name}.url(#{_style.to_sym})
+              #{name}.url(:#{_style})
             end
           RUBY
         end
