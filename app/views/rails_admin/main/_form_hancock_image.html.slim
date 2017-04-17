@@ -43,7 +43,18 @@
     div{style='margin-left: 35px; line-height: 40px;'}
       - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
       = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
-
+      
+- if field.show_urls and file and !file.blank?
+  .urls_list_block
+    = link_to 'Текущие ссылки', "#",class: "urls_toggler", onclick: "$(this).siblings('.url_block').toggleClass('hidden'); return false;"
+    - unless field.process_watermark_toggler
+      .url_block.hidden
+        span{style="width: 150px; display: inline-block;"}= "original: "
+        = file.url(:original, false)
+    - file.styles.each do |s_name, s_def|
+      .url_block.hidden
+        span{style="width: 150px; display: inline-block;"}= "#{s_name}(#{s_def.geometry}): "
+        = file.url(s_name, false)
 
 - if field.optional? and field.errors.blank? and file and field.delete_method
   - onclick = "$(this).siblings('[type=checkbox]').click(); $(this).siblings('.toggle').toggle('slow'); jQuery(this).toggleClass('btn-danger btn-info'); return false;"
