@@ -11,6 +11,7 @@ if Hancock.mongoid?
         name = name.to_sym
         is_image = true
         styles_method_name = nil
+        autocrop = (opts.key?(:autocrop) ? opts[:autocrop] : true)
         unless opts.blank?
           content_type = opts.delete(:content_type)
           jcrop_options = opts.delete(:jcrop_options)
@@ -46,7 +47,7 @@ if Hancock.mongoid?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          set_default_auto_crop_params_for name
+          set_default_auto_crop_params_for name if autocrop
         end
 
         has_mongoid_attached_file name, opts

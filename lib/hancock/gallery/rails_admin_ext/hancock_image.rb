@@ -16,7 +16,7 @@ module RailsAdmin
             "process_watermark_#{name}"
           end
           register_instance_option :perform_autocrop_method do
-            "#{name}_autocropped" if bindings[:object].respond_to?("#{name}_autocropped")
+            "#{name}_autocropped" if bindings and bindings[:object] and bindings[:object].respond_to?("#{name}_autocropped")
           end
           register_instance_option :perform_autocrop_default do
             true
@@ -59,7 +59,11 @@ module RailsAdmin
             if svg?
               :original
             else
-              @thumb_method ||= ((styles = bindings[:object].send(name).styles.keys).find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
+              if bindings and bindings[:object] and
+                @thumb_method ||= ((styles = bindings[:object].send(name).styles.keys).find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
+              else
+                :original
+              end
             end
           end
 
