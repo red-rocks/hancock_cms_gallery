@@ -18,9 +18,10 @@
 .toggle{class="#{_add_class}" style=('display:none;' if file and field.delete_method and form.object.send(field.delete_method) == '1')}
   - if value = field.pretty_value
     .preview
-      - unless field.svg?
-        .title_link_hint= "Обрезать"
       .image_block
+        - unless field.svg?
+          button{class="crop-btn" title="Обрезать"}
+            i.fa.fa-crop
         = value
   = form.file_field(field.name, field.html_attributes.reverse_merge({data: {fileupload: true, rails_admin_jcrop_options: rails_admin_jcrop_options } }))
 
@@ -37,33 +38,33 @@
       
       
 - if field.perform_autocrop_method
-  label{style='display: block;'}
+  label.autocrop-lable
+    - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
+    = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
+
     - _html_attributes = {class: 'form-control', checked: field.perform_autocrop_default}
-    span{style='float: left'}= form.check_box field.perform_autocrop_method, _html_attributes, "0", "1"
-    div{style='margin-left: 35px; line-height: 40px;'}
-      - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
-      = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
+    = form.check_box field.perform_autocrop_method, _html_attributes, "0", "1"
       
 - if field.show_urls and file and !file.blank?
   .urls_list_block
     = link_to 'Текущие ссылки', "#",class: "urls_toggler", onclick: "$(this).siblings('.url_block').toggleClass('hidden'); return false;"
     - unless field.process_watermark_toggler
       .url_block.hidden
-        span{style="width: 150px; display: inline-block;"}= "original: "
+        span = "original: "
         = file.url(:original, false)
     - file.styles.each do |s_name, s_def|
       .url_block.hidden
-        span{style="width: 150px; display: inline-block;"}= "#{s_name}(#{s_def.geometry}): "
+        span = "#{s_name}(#{s_def.geometry}): "
         = file.url(s_name, false)
 
 - if field.optional? and field.errors.blank? and file and field.delete_method
   - onclick = "$(this).siblings('[type=checkbox]').click(); $(this).siblings('.toggle').toggle('slow'); jQuery(this).toggleClass('btn-danger btn-info'); return false;"
-  br
+
   = link_to "#", data: {toggle:'button'}, onclick: onclick, class: "btn btn-info" do
     i.icon-white.icon-trash
     = "#{I18n.t('admin.actions.delete.menu').capitalize} #{field.method_name}"
 
   = form.check_box field.delete_method, style: 'display:none;'
-  br
+
 - if field.cache_method
   = form.hidden_field field.cache_method

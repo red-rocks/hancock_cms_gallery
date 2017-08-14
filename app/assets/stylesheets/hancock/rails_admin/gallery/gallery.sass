@@ -1,0 +1,36 @@
+.form-horizontal
+  .control-group.hancock_image_type
+    display: inline-block
+    vertical-align: top
+    position: relative
+    width: auto
+    .image_block
+      max-width: 200px
+      min-width: 40px
+      min-height: 40px
+      max-height: 200px
+      position: relative
+      margin-bottom: 10px
+    .crop-btn
+      position: absolute
+      right: 10px
+      top: 10px
+      background: rgba(0,0,0,0.66)
+      color: #fff
+      border: 0px
+      border-radius: 3px
+      font-size: 18px
+      padding: 5px 10px
+      +transition(all 0.3s ease-in-out)
+      &:hover
+        background: #ef5350
+    .btn-remove-image > i
+      margin-right: 5px
+    .toggle
+      margin-top: 5px
+    .autocrop-lable
+      input
+        display: inline-block
+        vertical-align: top
+      input[type="checkbox"]
+        margin-left: 10px
