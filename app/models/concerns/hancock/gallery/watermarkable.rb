@@ -2,11 +2,19 @@ module Hancock::Gallery::Watermarkable
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def paperclip_with_watermark(field = :image, original_image_class_name = "Hancock::Gallery::OriginalImage")
-
+    def paperclip_with_watermark(field = :image, original_image_class_name = "Hancock::Gallery::OriginalImage", opts = {})
+      if field.is_a?(Hash)
+        field, original_image_class_name, opts =
+          field.delete(:field) || :image, field.delete(:original_image_class_name) || "Hancock::Gallery::OriginalImage", field
+      else
+        if original_image_class_name.is_a?(Hash)
+          original_image_class_name, opts =
+            original_image_class_name.delete(:original_image_class_name) || "Hancock::Gallery::OriginalImage", original_image_class_name
+        end
+      end
       attr_accessor "process_watermark_#{field}".to_sym
 
-      hancock_cms_attached_file field, processors: -> (instance) {
+      opts[:processors] ||= -> (instance) {
         _processors = (instance.try("#{field}_default_processors") || []).dup
         p_o = _processors.delete :paperclip_optimizer
         if p_o
@@ -25,6 +33,8 @@ module Hancock::Gallery::Watermarkable
         end
         _processors.uniq
       }
+
+      hancock_cms_attached_file field, opts
 
       # field "original_#{field}", type: BSON::Binary
       has_one "original_#{field}_data", as: :originable, class_name: original_image_class_name, dependent: :destroy

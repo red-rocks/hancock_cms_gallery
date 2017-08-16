@@ -24,17 +24,18 @@
             i.fa.fa-crop
         = value
   = form.file_field(field.name, field.html_attributes.reverse_merge({data: {fileupload: true, rails_admin_jcrop_options: rails_admin_jcrop_options } }))
+  
+  - unless field.svg?
+    - model_name = form.object.class.to_param.gsub("::", "~").underscore
+    - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
+    - link_data = {link: url, thumb: field.thumb_method || "original"}
+    = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
 
-  - model_name = form.object.class.to_param.gsub("::", "~").underscore
-  - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
-  - link_data = {link: url, thumb: field.thumb_method || "original"}
-  = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
-
-  - if field.try(:process_watermark_toggler)
-    label{style='display: block;'}
-      - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
-      span{style='float: left'}= form.check_box field.process_watermark_toggler_method, _html_attributes
-      div{style='margin-left: 35px; line-height: 40px;'} Добавлять водяной знак?
+    - if field.try(:process_watermark_toggler)
+      label{style='display: block;'}
+        - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
+        span{style='float: left'}= form.check_box field.process_watermark_toggler_method, _html_attributes
+        div{style='margin-left: 35px; line-height: 40px;'} Добавлять водяной знак?
       
       
 - if field.perform_autocrop_method
