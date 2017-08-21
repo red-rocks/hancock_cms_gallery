@@ -31,7 +31,6 @@
     - link_data = {link: url, thumb: field.thumb_method || "original"}
     = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
 
-<<<<<<< HEAD
     - if field.try(:process_watermark_toggler)
       label{style='display: block;'}
         - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
@@ -39,21 +38,8 @@
         div{style='margin-left: 35px; line-height: 40px;'} Добавлять водяной знак?
       
       
-=======
-  - model_name = form.object.class.to_param.gsub("::", "~").underscore
-  - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
-  - link_data = {link: url, thumb: field.thumb_method || "original"}
-  = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
-
-- if field.try(:process_watermark_toggler)
-  label.watermark-lable.perform-lable
-    - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
-    = "Добавлять водяной знак?"
-    = form.check_box field.process_watermark_toggler_method, _html_attributes, "0", "1"
-
->>>>>>> 2e80939b01824db7be1ca75c6d23e32103a87c17
 - if field.perform_autocrop_method
-  label.autocrop-lable.perform-lable
+  label.autocrop-label
     - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
     = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
 
