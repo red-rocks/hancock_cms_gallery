@@ -45,7 +45,7 @@ module Hancock::Gallery
           "".freeze
         end
         def self.rails_admin_navigation_icon
-          ''.freeze
+          'fa fa-object-group'.freeze
         end
 
         def self.manager_can_add_actions
