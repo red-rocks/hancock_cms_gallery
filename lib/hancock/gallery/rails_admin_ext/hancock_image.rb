@@ -53,7 +53,7 @@ module RailsAdmin
           end
 
           register_instance_option :svg? do
-            (url = resource_url.to_s) && url.split('.').last =~ /svg/i
+            resource_url and (url = resource_url.to_s) and url.split('.').last =~ /svg/i
           end
           register_instance_option :thumb_method do
             if svg?
