@@ -48,11 +48,23 @@ if Hancock.active_record?
           set_default_auto_crop_params_for name if autocrop
         end
 
+        attr_reader :"#{name}_remote_url"
         has_attached_file name, opts
         # validates_attachment name, content_type: content_type unless content_type.blank?
         validates_attachment_content_type name, content_type: /\Aimage\/.*\Z/ if is_image
 
         class_eval <<-RUBY
+          def #{name}_remote_url=(url_value)
+            unless url_value.blank?
+              begin
+                self.#{name} = URI.parse(url_value)
+              rescue
+                self.errors.add(:#{name}, "Не удалось загрузить изображение")
+              end
+            end
+            @#{name}_remote_url = url_value
+          end
+
           def #{name}_file_name=(val)
             return self[:#{name}_file_name] = ""  if val == ""
             return self[:#{name}_file_name] = nil if val == nil

@@ -12,6 +12,7 @@ module Hancock::Gallery::Watermarkable
             original_image_class_name.delete(:original_image_class_name) || "Hancock::Gallery::OriginalImage", original_image_class_name
         end
       end
+      autocrop = (opts.key?(:autocrop) ? opts[:autocrop] : true)
       attr_accessor "process_watermark_#{field}".to_sym
 
       opts[:processors] ||= -> (instance) {
@@ -39,11 +40,20 @@ module Hancock::Gallery::Watermarkable
       # field "original_#{field}", type: BSON::Binary
       has_one "original_#{field}_data", as: :originable, class_name: original_image_class_name, dependent: :destroy
 
-      class_eval %{
-        def #{field}_auto_rails_admin_jcrop
+      if autocrop
+        autocrop_code = %{
           self.#{field}_autocropped = false if self.#{field}_autocropped == "0"
           return if self.#{field}.blank? or !self.#{field}_updated_at_changed? or self.#{field}_autocropped
           self.#{field}_autocropped = true
+        }
+      else
+        autocrop_code = ""
+      end
+
+      class_eval %{
+        def #{field}_auto_rails_admin_jcrop
+          #{autocrop_code}
+          return if self.#{field}.path.nil?
 
           if File.exists?(self.#{field}.path)
             auto_rails_admin_jcrop(:#{field})

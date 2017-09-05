@@ -93,7 +93,7 @@ module RailsAdmin
         @object.class.skip_callback(:save, :after, "save_original_#{params[:crop_field]}".to_sym)
         @object.save
         @object.class.set_callback(:save, :after, "save_original_#{params[:crop_field]}".to_sym)
-        @object.send("#{params[:crop_field]}_autocropped=", true)
+        @object.try("#{params[:crop_field]}_autocropped=", true)
         @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
         File.unlink(@object.send(params[:crop_field]).path) if File.exists?(@object.send(params[:crop_field]).path)
 
@@ -114,7 +114,7 @@ module RailsAdmin
           @object.class.skip_callback(:save, :after, "original_#{params[:crop_field]}_to_db".to_sym)
           @object.save
           @object.class.set_callback(:save, :after, "original_#{params[:crop_field]}_to_db".to_sym)
-          @object.send("#{params[:crop_field]}_autocropped=", true)
+          @object.try("#{params[:crop_field]}_autocropped=", true)
           @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
           _temp.unlink
         end

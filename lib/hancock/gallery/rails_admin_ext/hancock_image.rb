@@ -36,12 +36,17 @@ module RailsAdmin
           end
 
 
+          register_instance_option :remote_url_method do
+            "#{name}_remote_url"
+          end
+
+
           register_instance_option :allowed_methods do
+            ret = [method_name, delete_method, cache_method, perform_autocrop_method, remote_url_method]
             if process_watermark_toggler
-              [method_name, delete_method, cache_method, perform_autocrop_method, process_watermark_toggler_method].compact
-            else
-              [method_name, delete_method, cache_method, perform_autocrop_method].compact
+              ret << process_watermark_toggler_method
             end
+            ret.compact
           end
 
           register_instance_option :help do
@@ -59,7 +64,7 @@ module RailsAdmin
             if svg?
               :original
             else
-              if bindings and bindings[:object] and
+              if bindings and bindings[:object] and bindings[:object].send(name)
                 @thumb_method ||= ((styles = bindings[:object].send(name).styles.keys).find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
               else
                 :original
