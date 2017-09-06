@@ -23,36 +23,37 @@
           button{class="crop-btn" title="Обрезать"}
             i.fa.fa-crop
         = value
-  = form.file_field(field.name, field.html_attributes.reverse_merge({data: {fileupload: true, rails_admin_jcrop_options: rails_admin_jcrop_options } }))
 
-  - unless field.svg?
-    - model_name = form.object.class.to_param.gsub("::", "~").underscore
-    - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
-    - link_data = {link: url, thumb: field.thumb_method || "original"}
-    = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
+= form.file_field(field.name, field.html_attributes.reverse_merge({data: {fileupload: true, rails_admin_jcrop_options: rails_admin_jcrop_options } }))
 
-  - if field.try(:remote_url_method)
-    label.remote_url_method{style='display: block;'}
-      - if form.object.try(field.remote_url_method).blank?
-        - onclick = "sibl = $(this).siblings(); $(this).remove(); sibl.removeClass('hidden').find(':input').focus(); return false;"
-        div{style='margin-left: 35px; line-height: 40px;' onclick=onclick} Или укажите ссылку на изображение:
-        div.hidden{style='float: left'}
-          = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
-      - else
-        div{style='float: left'}
-          = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
+- unless field.svg?
+  - model_name = form.object.class.to_param.gsub("::", "~").underscore
+  - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
+  - link_data = {link: url, thumb: field.thumb_method || "original"}
+  = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
 
-  - if !field.svg? and field.try(:process_watermark_toggler)
-    label.process_watermark_toggler{style='display: block;'}
-      - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
-      span{style='float: left'}= form.check_box field.process_watermark_toggler_method, _html_attributes
-      div{style='margin-left: 35px; line-height: 40px;'} Добавлять водяной знак?
+- if field.try(:remote_url_method)
+  label.remote_url_method
+    - if form.object.try(field.remote_url_method).blank?
+      - onclick = "sibl = $(this).siblings(); $(this).remove(); sibl.removeClass('hidden').find(':input').focus(); return false;"
+      .remote_url_input{onclick=onclick} Или укажите ссылку на изображение
+      div.hidden
+        = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
+    - else
+      div
+        = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
 
+- if !field.svg? and field.try(:process_watermark_toggler)
+  label.process_watermark_toggler{style='display: block;'}
+    label Добавлять водяной знак?
+
+    - _html_attributes = {checked: field.process_watermark_default, class: 'form-control'}
+    = form.check_box field.process_watermark_toggler_method, _html_attributes
 
 - if field.perform_autocrop_method
   label.autocrop-label
     - _crop_params = form.object.send("#{field.name}_style_for_autocrop")
-    = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
+    label = _crop_params.blank? ? "Автоматическая обрезка" : "Автоматическая обрезка (#{_crop_params})"
 
     - _html_attributes = {class: 'form-control', checked: field.perform_autocrop_default}
     = form.check_box field.perform_autocrop_method, _html_attributes, "0", "1"
