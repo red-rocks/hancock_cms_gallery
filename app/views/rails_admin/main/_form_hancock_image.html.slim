@@ -35,8 +35,7 @@
 - if field.try(:remote_url_method)
   label.remote_url_method
     - if form.object.try(field.remote_url_method).blank?
-      - onclick = "sibl = $(this).siblings(); $(this).remove(); sibl.removeClass('hidden').find(':input').focus(); return false;"
-      .remote_url_input{onclick=onclick} Или укажите ссылку на изображение
+      .remote_url_input Или укажите ссылку на изображение
       div.hidden
         = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
     - else
@@ -60,7 +59,7 @@
 
 - if field.show_urls and file and !file.blank?
   .urls_list_block
-    = link_to 'Текущие ссылки', "#",class: "urls_toggler", onclick: "$(this).siblings('.url_block').toggleClass('hidden'); return false;"
+    = link_to 'Текущие ссылки', "#", class: "urls_toggler"
     - unless field.process_watermark_toggler
       .url_block.hidden
         span = "original: "
@@ -71,9 +70,7 @@
         = file.url(s_name, false)
 
 - if field.optional? and field.errors.blank? and file and field.delete_method
-  - onclick = "$(this).siblings('[type=checkbox]').click(); $(this).siblings('.toggle').toggle('slow'); jQuery(this).toggleClass('btn-danger btn-info'); return false;"
-
-  = link_to "#", data: {toggle:'button'}, onclick: onclick, class: "btn btn-info" do
+  = link_to "#", data: {toggle:'button'}, class: "delete_button_link btn btn-info" do
     i.icon-white.icon-trash
     = "#{I18n.t('admin.actions.delete.menu').capitalize} #{field.method_name}"
 
