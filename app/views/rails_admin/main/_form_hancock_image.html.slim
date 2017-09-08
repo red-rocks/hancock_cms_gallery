@@ -40,7 +40,7 @@
         = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
     - else
       div
-        = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение")
+        = form.text_field(field.remote_url_method, placeholder: "Ссылка на изображение", class: "valuable")
 
 - if !field.svg? and field.try(:process_watermark_toggler)
   label.process_watermark_toggler{style='display: block;'}
