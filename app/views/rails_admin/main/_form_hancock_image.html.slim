@@ -57,17 +57,18 @@
     - _html_attributes = {class: 'form-control', checked: field.perform_autocrop_default}
     = form.check_box field.perform_autocrop_method, _html_attributes, "0", "1"
 
-- if field.show_urls and file and !file.blank?
+- if field.show_urls and file
   .urls_list_block
     = link_to 'Текущие ссылки', "#", class: "urls_toggler"
     - unless field.process_watermark_toggler
       .url_block.hidden
         span = "original: "
-        = file.url(:original, false)
+        = link_to file.url(:original, false), file.url(:original, false), target: :_blank
     - file.styles.each do |s_name, s_def|
       .url_block.hidden
         span = "#{s_name}(#{s_def.geometry}): "
-        = file.url(s_name, false)
+        = link_to file.url(s_name, false), file.url(s_name, false), target: :_blank
+
 
 - if field.optional? and field.errors.blank? and file and field.delete_method
   = link_to "#", data: {toggle:'button'}, class: "delete_button_link btn btn-info" do

@@ -2,6 +2,23 @@ module Hancock::Gallery::AutoCrop
   extend ActiveSupport::Concern
   module ClassMethods
 
+    def unset_default_auto_crop_params_for(field = :image, opts = {})
+      # undef_method "#{field}_auto_rails_admin_jcrop"
+      undef_method "#{field}_autocropped"
+      undef_method "#{field}_autocropped="
+      undef_method "#{field}_default_max_crop_area"
+      undef_method "#{field}_default_max_crop_area="
+      undef_method "#{field}_default_auto_crop_method"
+      undef_method "#{field}_default_auto_crop_method="
+      undef_method "#{field}_style_for_autocrop"
+      undef_method "#{field}_default_crop_params"
+      class_eval <<-RUBY
+        def #{field}_auto_rails_admin_jcrop
+          true
+        end
+      RUBY
+    end
+
     def set_default_auto_crop_params_for(field = :image, opts = {})
       _width = opts.delete(:width)
       _height = opts.delete(:height)
@@ -16,21 +33,25 @@ module Hancock::Gallery::AutoCrop
       class_eval <<-RUBY
         after_save :#{field}_auto_rails_admin_jcrop
         def #{field}_auto_rails_admin_jcrop
+          self.#{field}_autocropped = true if self.#{field}_autocropped == "1"
           self.#{field}_autocropped = false if self.#{field}_autocropped == "0"
-          return if self.#{field}.blank? or !self.#{field}_updated_at_changed? or self.#{field}_autocropped
+          return true if self.#{field}.blank? or !self.#{field}_updated_at_changed? or self.#{field}_autocropped
           self.#{field}_autocropped = true
           auto_rails_admin_jcrop(:#{field})
+          return true
         end
 
-        def #{field}_style_for_autocrop(_styles = #{field}_styles)
+        def #{field}_style_for_autocrop(_styles = nil)
+          _styles = self.#{field}_styles if _styles.nil? and self.respond_to?(:#{field}_styles)
+          _styles = self.#{field}.styles if _styles.nil? and self.respond_to?(:#{field}) and self.#{field}.respond_to?(:styles)
           _methods = [:big, :main, :standard]
           _styles = _styles.call(#{field}) if _styles.respond_to?(:call)
           _style = nil
           _methods.each do |m|
             _style = _styles[m]
-            _style = _style[:geometry] if _style and _style.is_a?(Hash)
+            _style = _style[:geometry] if _style and _style.is_a?(Hash) or _style.is_a?(Paperclip::Style)
             break if !_style.blank? and _style
-          end
+          end unless _styles.blank?
           _style
         end
 

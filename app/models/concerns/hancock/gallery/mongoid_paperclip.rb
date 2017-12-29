@@ -47,22 +47,35 @@ if Hancock.mongoid?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          set_default_auto_crop_params_for name if autocrop
+          if autocrop
+            set_default_auto_crop_params_for name
+          else
+            unset_default_auto_crop_params_for name
+          end
         end
 
         attr_reader :"#{name}_remote_url"
         has_mongoid_attached_file name, opts
+        attr_accessor "delete_#{name}"
         # validates_attachment name, content_type: content_type unless content_type.blank?
         validates_attachment_content_type name, content_type: /\Aimage\/.*\Z/ if is_image
 
         class_eval <<-RUBY
           def #{name}_remote_url=(url_value)
-            begin
-              self.#{name} = URI.parse(url_value)
-            rescue
-              self.errors.add(:#{name}, "Не удалось загрузить изображение")
+           unless url_value.blank?
+              begin
+                self.#{name} = URI.parse(url_value)
+              rescue
+                self.errors.add(:#{name}, "Не удалось загрузить изображение")
+              end
             end
             @#{name}_remote_url = url_value
+          end
+
+          def delete_#{name}=(val)
+            if [true, 1, 't', 'true'].include?(val) # val == true or val == "1" or val == "true" or val == "t"
+              #{name}.clear
+            end
           end
 
           def #{name}_file_name=(val)
@@ -73,6 +86,7 @@ if Hancock.mongoid?
             if extension.blank?
               mime_type = MIME::Types[self.#{name}.content_type].first
               extension = mime_type.extensions.first if mime_type
+              extension = "jpg" if extension.blank? # WTF hardfix
               val = [val, extension].join(".") unless extension.blank?
             end
             file_name = val[0..val.size-extension.size-1]

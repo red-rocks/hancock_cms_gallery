@@ -45,7 +45,11 @@ if Hancock.active_record?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          set_default_auto_crop_params_for name if autocrop
+          if autocrop
+            set_default_auto_crop_params_for name
+          else
+            unset_default_auto_crop_params_for name
+          end
         end
 
         attr_reader :"#{name}_remote_url"
@@ -65,6 +69,12 @@ if Hancock.active_record?
             @#{name}_remote_url = url_value
           end
 
+          def delete_#{name}=(val)
+            if [true, 1, 't', 'true'].include?(val) # val == true or val == "1" or val == "true" or val == "t"
+              #{name}.clear
+            end
+          end
+
           def #{name}_file_name=(val)
             return self[:#{name}_file_name] = ""  if val == ""
             return self[:#{name}_file_name] = nil if val == nil
@@ -73,6 +83,7 @@ if Hancock.active_record?
             if extension.blank?
               mime_type = MIME::Types[self.#{name}.content_type].first
               extension = mime_type.extensions.first if mime_type
+              extension = "jpg" if extension.blank? # WTF hardfix
               val = [val, extension].join(".") unless extension.blank?
             end
             file_name = val[0..val.size-extension.size-1]
