@@ -4,14 +4,14 @@ module Hancock::Gallery::AutoCrop
 
     def unset_default_auto_crop_params_for(field = :image, opts = {})
       # undef_method "#{field}_auto_rails_admin_jcrop"
-      undef_method "#{field}_autocropped"
-      undef_method "#{field}_autocropped="
-      undef_method "#{field}_default_max_crop_area"
-      undef_method "#{field}_default_max_crop_area="
-      undef_method "#{field}_default_auto_crop_method"
-      undef_method "#{field}_default_auto_crop_method="
-      undef_method "#{field}_style_for_autocrop"
-      undef_method "#{field}_default_crop_params"
+      undef_method "#{field}_autocropped" rescue nil
+      undef_method "#{field}_autocropped=" rescue nil
+      undef_method "#{field}_default_max_crop_area" rescue nil
+      undef_method "#{field}_default_max_crop_area=" rescue nil
+      undef_method "#{field}_default_auto_crop_method" rescue nil
+      undef_method "#{field}_default_auto_crop_method=" rescue nil
+      undef_method "#{field}_style_for_autocrop" rescue nil
+      undef_method "#{field}_default_crop_params" rescue nil
       class_eval <<-RUBY
         def #{field}_auto_rails_admin_jcrop
           true
