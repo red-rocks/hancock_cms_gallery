@@ -73,7 +73,7 @@ if Hancock.mongoid?
           end
 
           def delete_#{name}=(val)
-            if [true, 1, 't', 'true'].include?(val) # val == true or val == "1" or val == "true" or val == "t"
+            if [true, 1, 't', 'true', '1'].include?(val) # val == true or val == "1" or val == "true" or val == "t"
               #{name}.clear
             end
           end
