@@ -5,7 +5,6 @@ module Hancock::Gallery
         extend ActiveSupport::Concern
 
         included do
-          # belongs_to :hancock_gallery_imagable, polymorphic: true
 
           has_paper_trail
           validates_lengths_from_database

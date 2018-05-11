@@ -18,12 +18,9 @@ module Hancock::Gallery
       include Hancock::Gallery.orm_specific('Image')
 
       included do
+        belongs_to :hancock_gallery_imagable, polymorphic: true, optional: true
 
-        if Hancock.rails4?
-          belongs_to :gallery, class_name: "Hancock::Gallery::Gallery"
-        else
-          belongs_to :gallery, class_name: "Hancock::Gallery::Gallery", optional: true
-        end
+        belongs_to :gallery, class_name: "Hancock::Gallery::Gallery", optional: true
 
         acts_as_nested_set
 

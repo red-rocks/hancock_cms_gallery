@@ -34,12 +34,7 @@ module Hancock::Gallery
         #   hancock_cms_attached_file(:image)
         # end
 
-
-        if Hancock.rails4?
-          belongs_to :gallerable, polymorphic: true
-        else
-          belongs_to :gallerable, polymorphic: true, optional: true
-        end
+        belongs_to :gallerable, polymorphic: true, optional: true
 
         def self.rails_admin_name_synonyms
           "".freeze
