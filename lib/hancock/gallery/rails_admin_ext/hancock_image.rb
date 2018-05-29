@@ -43,6 +43,8 @@ module RailsAdmin
 
           register_instance_option :allowed_methods do
             ret = [method_name, delete_method, cache_method, perform_autocrop_method, remote_url_method]
+            # https://github.com/sferik/rails_admin/blob/b92a4d1a30b706d08df2aee4d0a59dad698a0552/app/controllers/rails_admin/main_controller.rb#L92-L105
+            # bindings[:object] is not nested but parent, so resource_url had send wrong object
             if true or process_watermark_toggler # temporary fix for nested params
               ret << process_watermark_toggler_method
             end
