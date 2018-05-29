@@ -43,7 +43,7 @@ module RailsAdmin
 
           register_instance_option :allowed_methods do
             ret = [method_name, delete_method, cache_method, perform_autocrop_method, remote_url_method]
-            if process_watermark_toggler
+            if true or process_watermark_toggler # temporary fix for nested params
               ret << process_watermark_toggler_method
             end
             ret.compact
