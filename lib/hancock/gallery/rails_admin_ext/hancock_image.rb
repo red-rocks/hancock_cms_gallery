@@ -13,7 +13,9 @@ module RailsAdmin
           end
 
           register_instance_option :process_watermark_toggler_method do
-            (!svg? and "process_watermark_#{name}")
+            # (!svg? and "process_watermark_#{name}")
+            # read below in :allowed_methods
+            "process_watermark_#{name}"
           end
           register_instance_option :perform_autocrop_method do
             "#{name}_autocropped" if bindings and bindings[:object] and bindings[:object].respond_to?("#{name}_autocropped")
