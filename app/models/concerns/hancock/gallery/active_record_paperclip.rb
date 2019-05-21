@@ -111,6 +111,10 @@ if Hancock.active_record?
           def self.reprocess_all_#{name.to_s.pluralize}
             self.all.map(&:reprocess_#{name})
           end
+
+          def get_#{name}(style = :original)
+            #{name}(style)
+          end
         RUBY
         if defined?(::PaperclipOptimizer)
           class_eval <<-RUBY

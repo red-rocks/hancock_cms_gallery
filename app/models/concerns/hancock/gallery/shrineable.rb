@@ -46,6 +46,10 @@ module Hancock::Gallery::Shrineable
         def #{name}_updated_at
           #{name}.timestamp
         end
+
+        def get_#{name}(style = :original)
+          (#{name} and #{name}[style])
+        end
       RUBY
       
     end

@@ -1,5 +1,5 @@
 if defined?(Shrine)
-  class Hancock::Gallery::ImageImageUploader < Shrine
+  class Hancock::Gallery::EmbeddedImageImageUploader < Shrine
   
     # include ::HancockShrine::UploaderBase
     include ::HancockShrine::Uploadable
