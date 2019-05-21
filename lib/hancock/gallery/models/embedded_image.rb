@@ -4,8 +4,12 @@ module Hancock::Gallery
       if Hancock::Gallery.mongoid?
         extend ActiveSupport::Concern
 
-        include Hancock::Gallery::Paperclipable
-        include Hancock::Gallery::AutoCrop
+        # if defined?(Paperclip)
+        #   include Hancock::Gallery::Paperclipable
+        # elsif defined?(Shrine)
+        #   include Hancock::Gallery::Shrineable
+        # end
+        
         # if Hancock::Gallery.config.watermark_support
         #   include Hancock::Gallery::Watermarkable
         # end
@@ -13,7 +17,9 @@ module Hancock::Gallery
         include Hancock::Gallery.orm_specific('EmbeddedImage')
 
         included do
-          set_default_auto_crop_params_for(:image)
+          include Hancock::Gallery::Uploadable
+          
+          # set_default_auto_crop_params_for(:image)
           hancock_cms_attached_file(:image)
           # if Hancock::Gallery.config.watermark_support
           #   paperclip_with_watermark(:image)

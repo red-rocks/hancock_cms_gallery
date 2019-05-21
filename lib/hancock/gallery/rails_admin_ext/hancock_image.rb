@@ -69,7 +69,13 @@ module RailsAdmin
               :original
             else
               if bindings and bindings[:object] and bindings[:object].send(name)
-                @thumb_method ||= ((styles = bindings[:object].send(name).styles.keys).find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
+                f = bindings[:object].send(name)
+                styles = if f.respond_to?(:styles)
+                  f.styles.keys
+                else
+                  []
+                end
+                @thumb_method ||= (styles.find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
               else
                 :original
               end

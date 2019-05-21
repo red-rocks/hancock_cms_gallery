@@ -1,7 +1,7 @@
 module Hancock::Gallery::Paperclipable
   extend ActiveSupport::Concern
 
-  include Hancock::Gallery::AutoCrop
+  # include Hancock::Gallery::AutoCrop
 
   module ClassMethods
     def hancock_cms_attached_file(name, opts = {})

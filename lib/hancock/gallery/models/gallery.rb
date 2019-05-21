@@ -6,8 +6,12 @@ module Hancock::Gallery
       include ManualSlug
       include Hancock::Enableable
 
-      include Hancock::Gallery::Paperclipable
-      include Hancock::Gallery::AutoCrop
+      # if defined?(Paperclip)
+      #   include Hancock::Gallery::Paperclipable
+      # elsif defined?(Shrine)
+      #   include Hancock::Gallery::Shrineable
+      # end
+      
       # if Hancock::Gallery.config.watermark_support
       #   include Hancock::Gallery::Watermarkable
       # end
@@ -15,10 +19,15 @@ module Hancock::Gallery
       if Hancock::Gallery.config.cache_support
         include Hancock::Cache::Cacheable
       end
+      if Hancock::Seo.config.model_settings_support
+        include Hancock::Settingable
+      end
 
       include Hancock::Gallery.orm_specific('Gallery')
 
       included do
+        include Hancock::Gallery::Uploadable
+        
         manual_slug :name
 
         has_many :gallery_images, class_name: "Hancock::Gallery::Image"
@@ -26,7 +35,7 @@ module Hancock::Gallery
 
         acts_as_nested_set
 
-        set_default_auto_crop_params_for(:image)
+        # set_default_auto_crop_params_for(:image)
         hancock_cms_attached_file(:image)
         # if Hancock::Gallery.config.watermark_support
         #   paperclip_with_watermark(:image)

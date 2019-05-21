@@ -43,22 +43,24 @@ module Hancock::Gallery::AutoCrop
 
         def #{field}_style_for_autocrop(_styles = nil)
           _styles = self.#{field}_styles if _styles.nil? and self.respond_to?(:#{field}_styles)
-          _styles = self.#{field}.styles if _styles.nil? and self.respond_to?(:#{field}) and self.#{field}.respond_to?(:styles)
+          _styles = self.#{field}.styles if defined?(::Paperclip) and _styles.nil? and self.respond_to?(:#{field}) and self.#{field}.respond_to?(:styles)
           _methods = [:big, :main, :standard]
           _styles = _styles.call(#{field}) if _styles.respond_to?(:call)
           _style = nil
-          _methods.each do |m|
-            _style = _styles[m]
-            _style = _style[:geometry] if _style and _style.is_a?(Hash) or _style.is_a?(Paperclip::Style)
-            break if !_style.blank? and _style
-          end unless _styles.blank?
+          if defined?(::Paperclip)
+            _methods.each do |m|
+              _style = _styles[m]
+              _style = _style[:geometry] if _style and _style.is_a?(Hash) or _style.is_a?(Paperclip::Style)
+              break if !_style.blank? and _style
+            end unless _styles.blank?
+          end
           _style
         end
 
         def #{field}_default_crop_params
           if self.#{field} and !self.#{field}_file_name.blank?
             _default_max_crop_area = self.#{field}_default_max_crop_area
-            if _default_max_crop_area or self.respond_to?(:#{field}_styles)
+            if defined?(::Paperclip) and (_default_max_crop_area or self.respond_to?(:#{field}_styles))
               if _default_max_crop_area.blank?
                 if _style = #{field}_style_for_autocrop
                   # sizes = _style.match(/^(?<width>[\d\.]+)?(x(?<height>[\d\.]+))?/)

@@ -45,11 +45,11 @@ if Hancock.active_record?
             opts[:styles] = lambda { |attachment| attachment.instance.send(styles_method_name) }
           end
 
-          if autocrop
-            set_default_auto_crop_params_for name
-          else
-            unset_default_auto_crop_params_for name
-          end
+          # if autocrop
+          #   set_default_auto_crop_params_for name
+          # else
+          #   unset_default_auto_crop_params_for name
+          # end
         end
 
         attr_reader :"#{name}_remote_url"

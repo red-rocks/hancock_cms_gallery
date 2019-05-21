@@ -16,60 +16,50 @@ module RailsAdmin
       @image_tag_options = {}
       @image_tag_options[:class] = "jcrop-subject"
       @file_path=''
+      
+      current_field = @object.send(@field)
+      
       #Condition for Carrierwave.
-      if @object.send(@field).class.to_s =~ /Uploader/
-        if @object.send(@field)._storage.to_s =~ /Fog/
-          @file_path=@object.send(@field).url
-
+      if is_this_carrierwave?(current_field)
+        @file_path = if current_field._storage.to_s =~ /Fog/
+          current_field.url
         else
-          @file_path=@object.send(@field).path
+          current_field.path
         end
-      #Condition for Paperclip.
-      elsif @object.send(@field).class.to_s =~ /Paperclip/
-        if (@object.send(@field).options[:storage].to_s =='s3')
-          @file_path=@object.send(@field).url
-
-        else
-          @file_path=@object.send(@field).path
-        end
-      end
-
-      if File.exists?(@file_path)
         @image_tag_options[:'data-geometry'] = geometry(@file_path).join(",")
 
-        if @fit_image_geometry
-          fit_image_geometry = fit_image_geometry(@file_path)
+      #Condition for Paperclip.
+      elsif is_this_paperclip?(current_field)
+        @file_path = if current_field.options[:storage].to_s =='s3'
+          current_field.url
+        else
+          current_field.path
+        end
+        @image_tag_options[:'data-geometry'] = geometry(@file_path).join(",")
 
-          @form_options[:'style'] = "margin-left: #{375 - (fit_image_geometry[0]/2) - 15}px;"
-
-          @image_tag_options[:style] = ""
-          @image_tag_options[:style] << "width: #{fit_image_geometry[0]}px !important;"
-          @image_tag_options[:style] << "height: #{fit_image_geometry[1]}px !important;"
-          @image_tag_options[:style] << "border: 1px solid #AAA !important;"
+      #Condition for Shrine.
+      elsif is_this_shrine?(current_field)
+        current_field = current_field[:original] if current_field.is_a?(Hash)
+        @file_path = if defined?(::Shrine::Storage::S3) and (current_field.storage.is_a?(::Shrine::Storage::S3))
+          current_field.url
+        else
+          current_field.to_io
         end
 
-      # original file in object`s original_image as file
-      elsif @object.try("original_#{@field}_data") and !@object.send("original_#{@field}_data").image.blank?
-        @image_tag_options[:'data-geometry'] = geometry(@object.send("original_#{@field}_data").image.path).join(",")
+        metadata = current_field.metadata
+        @image_tag_options[:'data-geometry'] = [metadata["width"], metadata["height"]].join(",")
+      end
+      
 
-        if @fit_image_geometry
-          fit_image_geometry = fit_image_geometry(@object.send("original_#{@field}_data").image.path)
+      if @fit_image_geometry
+        fit_image_geometry = fit_image_geometry(@file_path)
 
-          @form_options[:'style'] = "margin-left: #{375 - (fit_image_geometry[0]/2) - 15}px;"
+        @form_options[:'style'] = "margin-left: #{375 - (fit_image_geometry[0]/2) - 15}px;"
 
-          @image_tag_options[:style] = ""
-          @image_tag_options[:style] << "width: #{fit_image_geometry[0]}px !important;"
-          @image_tag_options[:style] << "height: #{fit_image_geometry[1]}px !important;"
-          @image_tag_options[:style] << "border: 1px solid #AAA !important;"
-        end
-
-      elsif @object.respond_to?("original_#{@field}")
-        _data = @object.send("original_#{@field}")
-        if _data
-          _data = _data.data
-          image = MiniMagick::Image.read(_data)
-          @image_tag_options[:'data-geometry'] = [image[:width], image[:height]].join(",")
-        end
+        @image_tag_options[:style] = ""
+        @image_tag_options[:style] << "width: #{fit_image_geometry[0]}px !important;"
+        @image_tag_options[:style] << "height: #{fit_image_geometry[1]}px !important;"
+        @image_tag_options[:style] << "border: 1px solid #AAA !important;"
       end
 
       respond_to do |format|
@@ -79,53 +69,45 @@ module RailsAdmin
     end
 
     def update
-      @object.try("process_watermark_#{params[:crop_field]}=", params["process_watermark_#{params[:crop_field]}".to_sym])
-
-      if File.exists?(@object.send(params[:crop_field]).path)
-        @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
-
-      # original file in object`s original_image as file
-      elsif @object.try("original_#{params[:crop_field]}_data") and !@object.send("original_#{params[:crop_field]}_data").image.blank?
-        _dir = File.dirname(@object.send(params[:crop_field]).path)
-        FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
-        File.unlink(@object.send(params[:crop_field]).path) if File.symlink?(@object.send(params[:crop_field]).path)
-        File.symlink(@object.send("original_#{params[:crop_field]}_data").image.path, @object.send(params[:crop_field]).path)
-        @object.class.skip_callback(:save, :after, "save_original_#{params[:crop_field]}".to_sym)
-        @object.save
-        @object.class.set_callback(:save, :after, "save_original_#{params[:crop_field]}".to_sym)
-        @object.try("#{params[:crop_field]}_autocropped=", true)
-        @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
-        File.unlink(@object.send(params[:crop_field]).path) if File.exists?(@object.send(params[:crop_field]).path)
-
-      elsif @object.try("original_#{params[:crop_field]}")
-        _old_filename = @object.send("#{params[:crop_field]}_file_name")
-        _data = @object.send("original_#{params[:crop_field]}")
-        if _data
-          _data = _data.data
-          _temp = Tempfile.new(_old_filename)
-          _temp.binmode
-          _temp.write _data
-          _dir = File.dirname(@object.send(params[:crop_field]).path)
-          FileUtils.mkdir_p(_dir) unless File.exists?(_dir)
-          File.unlink(@object.send(params[:crop_field]).path) if File.symlink?(@object.send(params[:crop_field]).path)
-          File.symlink(_temp.path, @object.send(params[:crop_field]).path)
-          # @object.send("#{params[:crop_field]}=", _temp)
-          # @object.send(params[:crop_field]).instance_write(:file_name, _old_filename)#"#{SecureRandom.hex}#{File.extname(_old_filename)}")
-          @object.class.skip_callback(:save, :after, "original_#{params[:crop_field]}_to_db".to_sym)
-          @object.save
-          @object.class.set_callback(:save, :after, "original_#{params[:crop_field]}_to_db".to_sym)
-          @object.try("#{params[:crop_field]}_autocropped=", true)
-          @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage')
-          _temp.unlink
+      if params[:cancel_crop] == "1"
+        image_obj = @object.send(params[:crop_field])
+        _path = if image_obj.is_a?(Hash)
+          image_obj[:original].to_io.path
+        elsif image_obj.is_a?(Paperclip::Attachment)
+          image_obj.path
         end
+        if _path and File.exists?(_path)
+          _geometry = geometry(_path)
+        else
+          _geometry = [0, 0]
+        end
+        params[:crop_x] = 0
+        params[:crop_y] = 0
+        params[:crop_w] = _geometry[0]
+        params[:crop_h] = _geometry[1]
       end
+      
+      _field = @object.send(params[:crop_field])
+
+      @object.rails_admin_crop! params.merge(crop_process_before: '+repage', crop_process_after: '+repage'), upload_plugin_prefix
 
       respond_to do |format|
         format.html { redirect_to_on_success }
         format.js do
           asset = @object.send @field
-          urls = {:original => asset.url}
-          thumbnail_names.each {|name| urls[name] = asset.url(name)}
+          if asset.is_a?(Hash)
+            _asset = asset[:original] 
+          else
+            _asset = asset
+          end
+          urls = {:original => _asset.url}
+          thumbnail_names.each { |name| 
+            urls[name] = if asset.is_a?(Hash)
+              (asset[name] || asset[name.to_sym]).url
+            else
+              (asset.is_a?(Paperclip::Attachment) ? asset.url(name) : asset.url)
+            end
+          }
 
           render :json => {
             :id    => @object.id,
@@ -139,8 +121,22 @@ module RailsAdmin
 
     private
 
+    def upload_plugin_prefix(field = @field)
+      _field = @object.send(field)
+
+      if is_this_carrierwave?(_field)
+        'cw_'
+      elsif is_this_paperclip?(_field)
+        'pc_'
+      elsif is_this_shrine?(_field)
+        's_'
+      else 
+        nil
+      end
+    end
+
     def thumbnail_names
-      RailsAdminJcrop::AssetEngine.thumbnail_names(@object, @field)
+      RailsAdminJcrop::AssetEngine.send("#{upload_plugin_prefix}thumbnail_names", @object, @field)
     end
 
     def get_fit_image
@@ -165,6 +161,17 @@ module RailsAdmin
 
     def cropping?
       [:crop_x, :crop_y, :crop_w, :crop_h].all? {|c| params[c].present?}
+    end
+
+
+    def is_this_carrierwave?(_field)
+      !!(defined?(::Carrierwave) and _field.class.to_s =~ /Uploader/)
+    end
+    def is_this_paperclip?(_field)
+      !!(defined?(::Paperclip) and _field.class.to_s =~ /Paperclip/)
+    end
+    def is_this_shrine?(_field)
+      !!(defined?(::Shrine) and (_field.is_a?(Hash) or _field.class.to_s =~ /UploadedFile/))
     end
   end
 
