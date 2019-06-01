@@ -45,9 +45,6 @@ module Hancock::Gallery
         def self.rails_admin_name_synonyms
           "Photo Картинки Картинка Изображение Изображения".freeze
         end
-        def self.rails_admin_navigation_icon
-          'icon-picture'.freeze
-        end
 
         def self.manager_can_add_actions
           ret = [:nested_set]

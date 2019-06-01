@@ -9,6 +9,7 @@ module Hancock::Gallery
         end
 
         Proc.new {
+          navigation_icon 'mdi mdi-image-filter'
           navigation_label(!nav_label.blank? ? nav_label : I18n.t('hancock.gallery'))
 
           field :enabled, :toggle do

@@ -48,9 +48,6 @@ module Hancock::Gallery
         def self.rails_admin_name_synonyms
           "".freeze
         end
-        def self.rails_admin_navigation_icon
-          'fa fa-object-group'.freeze
-        end
 
         def self.manager_can_add_actions
           ret = [:nested_set, :multiple_file_upload]
