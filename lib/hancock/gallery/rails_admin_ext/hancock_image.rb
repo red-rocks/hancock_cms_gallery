@@ -42,6 +42,9 @@ module RailsAdmin
             "#{name}_remote_url"
           end
 
+          register_instance_option :delete_method do
+            "remove_#{name}"
+          end
 
           register_instance_option :allowed_methods do
             ret = [method_name, delete_method, cache_method, perform_autocrop_method, remote_url_method]
@@ -64,17 +67,22 @@ module RailsAdmin
           register_instance_option :svg? do
             resource_url and (url = resource_url.to_s) and url.split('.').last =~ /svg/i
           end
+
+          register_instance_option :styles do
+            if @styles.nil?
+              @styles = []
+              if value
+                @styles = value.keys if value.is_a?(Hash)
+                @styles = value.styles if styles.blank? and value.respond_to?(:styles)
+              end
+            end
+            @styles
+          end
           register_instance_option :thumb_method do
             if svg?
               :original
             else
               if bindings and bindings[:object] and bindings[:object].send(name)
-                f = bindings[:object].send(name)
-                styles = if f.respond_to?(:styles)
-                  f.styles.keys
-                else
-                  []
-                end
                 @thumb_method ||= (styles.find{|k| k.in?([:thumb, :thumbnail, 'thumb', 'thumbnail'])} || styles.first.to_s)
               else
                 :original
