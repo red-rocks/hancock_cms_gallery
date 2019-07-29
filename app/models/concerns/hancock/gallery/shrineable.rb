@@ -19,6 +19,12 @@ module Hancock::Gallery::Shrineable
       attacher = "#{name}_attacher"
       
       class_eval <<-RUBY
+        def remove_#{name}!
+          if respond_to?(:remove_#{name}=)
+            self.remove_#{name} = 1
+            self.save
+          end
+        end
         def #{name}?
           !#{name}.blank?
         end
@@ -36,7 +42,8 @@ module Hancock::Gallery::Shrineable
         def reprocess_#{name}
           file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
           if #{attacher}.stored?
-            self.assign(#{name}: file)
+            # self.assign(#{name}: file)
+            self.update(#{name}: file)
           else
             if #{attacher}.cached?
               #{attacher}.store!(#{name})
