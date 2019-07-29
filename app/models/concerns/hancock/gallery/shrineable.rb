@@ -17,6 +17,7 @@ module Hancock::Gallery::Shrineable
       field "#{name}_data", type: Hash
       
       attacher = "#{name}_attacher"
+        
       
       class_eval <<-RUBY
         def remove_#{name}!
@@ -58,6 +59,18 @@ module Hancock::Gallery::Shrineable
           (#{name} and #{name}[style])
         end
       RUBY
+
+      styles_method_name = opts.delete(:styles_method_name)
+      styles_method_name = "#{name}_styles" if styles_method_name.nil?
+      if styles_method_name
+        class_eval <<-RUBY
+          def #{styles_method_name}
+            {
+              thumb: '128x128'
+            }
+          end
+        RUBY
+      end
       
     end
     
