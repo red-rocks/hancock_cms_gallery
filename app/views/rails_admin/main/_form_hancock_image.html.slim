@@ -15,8 +15,9 @@
 - file = form.object.send(field.method_name).presence
 
 - _add_class = (field.pretty_value and !field.svg? ? "jcrop_data_value" : "")
-.toggle{class="#{_add_class}" style=('display:none;' if file and field.delete_method and form.object.send(field.delete_method) == '1')}
-  - if value = field.pretty_value
+- _add_style = 'display:none;' if file and field.delete_method and form.object.send(field.delete_method) == '1'
+.toggle{class=_add_class style=_add_style}
+  - if (value = field.pretty_value)
     .preview
       .image_block
         - unless field.svg?
@@ -30,7 +31,7 @@
   - model_name = form.object.class.to_param.gsub("::", "~").underscore
   - url = jcrop_path(model_name: model_name, modal: true, id: form.object.id, field: field.name, fit_image: field.fit_image)
   - link_data = {link: url, thumb: field.thumb_method || "original"}
-  = link_to 'Edit Image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
+  = link_to 'Edit image', '#', data: link_data, style: 'display:none', class: "jcrop_handle"
 
 - if field.try(:remote_url_method) and form.object.respond_to?(field.remote_url_method)
   label.remote_url_method
@@ -73,7 +74,7 @@
 
 
 - if field.optional? and field.errors.blank? and file and field.delete_method
-  = link_to "#", data: {toggle:'button'}, class: "delete_button_link btn btn-info" do
+  = link_to "#", data: {toggle:'button'}, class: "delete_button_link btn btn-info btn-with-icon" do
     i.icon-white.icon-trash
     = "#{I18n.t('admin.actions.delete.menu').capitalize} #{field.method_name}"
 
@@ -81,5 +82,3 @@
 
 - if field.cache_method
   = form.hidden_field field.cache_method
-
-//TODO: image-input css

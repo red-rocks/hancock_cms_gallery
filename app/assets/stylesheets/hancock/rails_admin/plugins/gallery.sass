@@ -1,69 +1,29 @@
-body.rails_admin .form-horizontal .control-group.hancock_image_type .img-thumbnail
-  margin-bottom: 0px
+.remote_url_method
+  padding: 0px
+  font-weight: normal
+  display: block
+  margin-top: 5px
+  margin-bottom: 5px
+  cursor: text
+  div, input
+    border: 1px solid lightgrey
+    padding: 5px
+    margin: 0px
+    &:focus
+      border: 1px solid deepskyblue
+  div:last-child
+    padding: 0px
+    border: 0px
 
-.form-horizontal
-  .control-group.hancock_image_type
-    display: inline-block
-    vertical-align: top
-    position: relative
-    width: auto
-    padding-bottom: 15px
-    .image_block
-      max-width: 200px
-      min-width: 40px
-      min-height: 40px
-      max-height: 200px
-      position: relative
-    .crop-btn
-      position: absolute
-      top: 5px
-      left: 5px
-    .btn-remove-image > i
-      margin-right: 5px
-    .toggle
-      margin-top: 5px
-      margin-bottom: 10px
-    .perform-label, .autocrop-label, .process_watermark_toggler
-      margin: 10px 0px
-      > label
-        display: inline-block
-        vertical-align: top
-        cursor: pointer
-      input
-        display: inline-block
-        vertical-align: top
-      input[type="checkbox"]
-        margin-right: 10px
-    .remote_url_method
-      margin: 10px 0px
-      cursor: text
-      width: 100%
-      .remote_url_input, input
-        width: 100%
-        font-size: 13px
-        line-height: 1.42857
-        color: #555555
-        background-color: #fff
-        background-image: none
-        border: 1px solid #ccc
-        padding: 5px 10px
-        font-weight: normal
-        -webkit-border-radius: 3px
-        -moz-border-radius: 3px
-        -ms-border-radius: 3px
-        border-radius: 3px
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075)
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075)
-        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075)
-        -o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075)
-        -moz-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
-        -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
-        -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
-        transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
-      .remote_url_input:hover, input:focus
-        border-color: #66afe9
-        outline: 0
-        -webkit-box-shadow: inset 0 0px 0px transparent, 0 0 0px rgba(102, 175, 233, 0)
-        box-shadow: inset 0 0px 0px transparent, 0 0 0px rgba(102, 175, 233, 0)
-        -moz-box-shadow: inset 0 0px 0px transparent, 0 0 0px rgba(102, 175, 233, 0)
-        -o-box-shadow: inset 0 0px 0px transparent, 0 0 0px rgba(102, 175, 233, 0)
+input[data-fileupload]
+  margin-top: 5px
+  margin-bottom: 5px
+
+.delete_button_link
+  margin-top: 5px
+  margin-bottom: 5px
+
+#modal .jcrop-holder
+  border: 0px
+  ~ .btn
+    margin-top: 10px
