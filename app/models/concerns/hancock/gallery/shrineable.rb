@@ -12,6 +12,11 @@ module Hancock::Gallery::Shrineable
     def add_hancock_shrine_uploader(name, opts = {})
       uploader_class = opts.delete(:uploader_class) || ("#{self.to_s.camelize}#{name.to_s.camelize}Uploader").constantize
       attachment_class = uploader_class::Attachment
+      unless opts.blank?
+        crop_options = opts.delete(:crop_options)
+        is_image = opts.delete(:is_image)
+        is_image = true if is_image.nil?
+      end
       
       include attachment_class.new(name)
       field "#{name}_data", type: Hash
@@ -70,6 +75,18 @@ module Hancock::Gallery::Shrineable
             }
           end
         RUBY
+
+      end
+
+      crop_options ||= {}
+      if crop_options
+        class_eval <<-RUBY
+          def #{name}_crop_options
+            #{crop_options}
+          end
+          alias_method :#{name}_jcrop_options, :#{name}_crop_options
+        RUBY
+
       end
       
     end

@@ -127,6 +127,7 @@ if Hancock.mongoid?
               true
             end
           RUBY
+
         end
         jcrop_options ||= {}
         if jcrop_options
@@ -135,6 +136,7 @@ if Hancock.mongoid?
               #{jcrop_options}
             end
           RUBY
+
         end
         if styles_method_name
           class_eval <<-RUBY
@@ -144,6 +146,7 @@ if Hancock.mongoid?
               }
             end
           RUBY
+
         end
 
       end
