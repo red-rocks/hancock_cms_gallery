@@ -38,6 +38,7 @@ module Hancock::Gallery::Shrineable
           file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
           if #{attacher}.stored?
             self.update!(#{name}: file)
+            # self.#{attacher}._promote(action: :store)
           else
             if #{attacher}.cached?
               #{attacher}.store!(#{name})
@@ -46,10 +47,12 @@ module Hancock::Gallery::Shrineable
           end
         end
         def reprocess_#{name}
+          puts 'reprocess_ #{name}'
           file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
           if #{attacher}.stored?
-            # self.assign(#{name}: file)
-            self.update(#{name}: file)
+            self.assign_attributes(#{name}: file)
+            # self.update(#{name}: file)
+            # self.#{attacher}._promote(action: :store)
           else
             if #{attacher}.cached?
               #{attacher}.store!(#{name})

@@ -173,6 +173,6 @@
 })(jQuery);
 
 $(function() {
-  $('div.jcrop_type, div.hancock_image_type, div.shrine_type').jcropForm();
+  $('div.jcrop_type, div.hancock_image_type, div.shrine_type, div.hancock_shrine_type:not(.no-jcrop)').jcropForm();
 });
 
