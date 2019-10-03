@@ -4,6 +4,9 @@
 
 window.hancock.plugins.gallery ||= {}
 
+return if window.hancock_cms.gallery.loaded
+window.hancock_cms.gallery.loaded = true
+
 
 # TODO hancock_shrine_type
 $(document).on "click", ".hancock_image_type .remote_url_input, .hancock_shrine_type .remote_url_input", (e)->
