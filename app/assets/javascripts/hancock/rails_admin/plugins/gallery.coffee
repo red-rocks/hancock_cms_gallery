@@ -4,8 +4,8 @@
 
 window.hancock.plugins.gallery ||= {}
 
-return if window.hancock_cms.gallery.loaded
-window.hancock_cms.gallery.loaded = true
+return if window.hancock.plugins.gallery.loaded
+window.hancock.plugins.gallery.loaded = true
 
 
 # TODO hancock_shrine_type
