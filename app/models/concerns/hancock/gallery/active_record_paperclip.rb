@@ -1,5 +1,6 @@
-if Hancock.active_record?
-  module Hancock::Gallery::ActiveRecordPaperclip
+module Hancock::Gallery::ActiveRecordPaperclip
+  if Hancock.active_record?
+    
     extend ActiveSupport::Concern
 
     included do
@@ -168,5 +169,6 @@ if Hancock.active_record?
       end
 
     end
+
   end
 end
