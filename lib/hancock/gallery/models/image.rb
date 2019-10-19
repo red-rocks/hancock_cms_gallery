@@ -67,9 +67,21 @@ module Hancock::Gallery
 
       end
 
-      class_methods do
+      # class_methods do
+      #   # def inherited(subclass)
+      #   #   super
+      #   #   puts 'image inherited'
+      #   #   subclass.hancock_cms_attached_file(:image)
+      #   #   # unless subclass.fields.keys.include?("_type")
+      #   #   #   subclass.field :_type, type: String, default: subclass.name
+      #   #   # end
+      #   # end
+      # end
+
+      module ClassMethods
         def inherited(subclass)
-          puts 'image inherited'
+          super
+          puts 'image inherited2'
           subclass.hancock_cms_attached_file(:image)
         end
       end
