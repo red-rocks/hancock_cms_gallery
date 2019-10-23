@@ -28,15 +28,6 @@ module RailsAdmin
         end
         @image_tag_options[:'data-geometry'] = geometry(@file_path).join(",")
 
-      #Condition for Paperclip.
-      elsif is_this_paperclip?(current_field)
-        @file_path = if current_field.options[:storage].to_s =='s3'
-          current_field.url
-        else
-          current_field.path
-        end
-        @image_tag_options[:'data-geometry'] = geometry(@file_path).join(",")
-
       #Condition for Shrine.
       elsif is_this_shrine?(current_field)
         current_field = current_field[:original] if current_field.is_a?(Hash)
@@ -48,6 +39,15 @@ module RailsAdmin
 
         metadata = current_field.metadata
         @image_tag_options[:'data-geometry'] = [metadata["width"], metadata["height"]].join(",")
+
+      #Condition for Paperclip.
+      elsif is_this_paperclip?(current_field)
+        @file_path = if current_field.options[:storage].to_s =='s3'
+          current_field.url
+        else
+          current_field.path
+        end
+        @image_tag_options[:'data-geometry'] = geometry(@file_path).join(",")
       end
       
 
