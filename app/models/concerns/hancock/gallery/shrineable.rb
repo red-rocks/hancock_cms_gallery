@@ -3,14 +3,24 @@ module Hancock::Gallery::Shrineable
 
   # include Hancock::Gallery::AutoCrop
 
-  module ClassMethods
+  class_methods do
     def hancock_cms_attached_file(name, opts = {})
       add_hancock_shrine_uploader(name, opts)
     end
 
 
     def add_hancock_shrine_uploader(name, opts = {})
-      uploader_class = opts.delete(:uploader_class) || ("#{self.to_s.camelize}#{name.to_s.camelize}Uploader").constantize
+      # uploader_class = opts.delete(:uploader_class) || ("#{self.to_s.camelize}#{name.to_s.camelize}Uploader").constantize
+      uploader_class = if opts 
+        if opts.has_key?(:uploader_class)
+          opts.delete(:uploader_class)
+        elsif opts.has_key?(:uploader_class_name)
+          opts.delete(:uploader_class_name).safe_constantize
+        end
+      end
+      uploader_class ||= get_uploader_class_name(name.to_s).safe_constantize
+      return nil if uploader_class.nil? # TODO or maybe return
+
       attachment_class = uploader_class::Attachment
       unless opts.blank?
         crop_options = opts.delete(:crop_options)
@@ -92,6 +102,17 @@ module Hancock::Gallery::Shrineable
 
       end
       
+    end
+
+    def get_uploader_class_name(name)
+      uploader_class_name = "#{self.name.camelize}#{name.to_s.camelize}Uploader"
+      unless defined?(uploader_class_name.safe_constantize)
+        _superclass = self.superclass
+        if _superclass < Hancock::Gallery::Shrineable
+          return self.superclass.get_uploader_class_name(name)
+        end
+      end
+      uploader_class_name
     end
     
   end
