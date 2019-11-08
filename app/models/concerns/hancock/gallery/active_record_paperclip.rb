@@ -56,9 +56,15 @@ module Hancock::Gallery::ActiveRecordPaperclip
         attr_reader :"#{name}_remote_url"
         has_attached_file name, opts
         # validates_attachment name, content_type: content_type unless content_type.blank?
-        validates_attachment_content_type name, content_type: /\Aimage\/.*\Z/ if is_image
+        
+        if is_image
+          validates_attachment_content_type name, content_type: /\Aimage\/.*\Z/
+        end
 
         class_eval <<-RUBY
+          def self.#{name}_is_image?; #{!!is_image}; end
+          def #{name}_is_image?; self.class.#{name}_is_image?; end
+
           def #{name}_remote_url=(url_value)
             unless url_value.blank?
               begin
