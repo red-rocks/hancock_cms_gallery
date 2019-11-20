@@ -23,13 +23,13 @@ module Hancock::Gallery::Shrineable
           opts.delete(:uploader_class_name).safe_constantize
         end
       end
-      puts uploader_class.inspect
+      # puts uploader_class.inspect
       uploader_class ||= get_uploader_class(name.to_s, is_image)
       return nil if uploader_class.nil? # TODO or maybe return
 
       attachment_class = uploader_class::Attachment
       
-      include attachment_class.new(name)
+      include attachment_class.new(name, hancock_model: self, is_image: is_image)
       field "#{name}_data", type: Hash
       
       attacher = "#{name}_attacher"
@@ -48,6 +48,10 @@ module Hancock::Gallery::Shrineable
           !#{name}.blank?
         end
         def reprocess_#{name}!
+          if #{attacher} and #{attacher}.respond_to?(:derivatives)
+            #{attacher}.remove_derivatives
+            return (#{name}_derivatives! and self.save!)
+          end
           file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
           if #{attacher}.stored?
             self.update!(#{name}: file)
@@ -61,6 +65,11 @@ module Hancock::Gallery::Shrineable
         end
         def reprocess_#{name}
           puts 'reprocess_ #{name}'
+          if #{attacher} and #{attacher}.respond_to?(:derivatives)
+            #{attacher}.remove_derivatives
+            return #{name}_derivatives!
+          end
+          
           file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
           if #{attacher}.stored?
             self.assign_attributes(#{name}: file)
@@ -73,7 +82,7 @@ module Hancock::Gallery::Shrineable
           end
         end
         def #{name}_updated_at
-          #{name}.timestamp
+          (#{name} and #{name}.timestamp)
         end
 
         def get_#{name}(style = :original)
