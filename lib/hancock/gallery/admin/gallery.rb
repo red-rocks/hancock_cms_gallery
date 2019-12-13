@@ -26,7 +26,7 @@ module Hancock::Gallery
           #   field :text_slug
           # end
 
-          field :image, :hancock_image
+          field :image, (defined?(HancockShrine) ? :hancock_shrine : :hancock_image)
 
           field :gallerable do
             read_only true

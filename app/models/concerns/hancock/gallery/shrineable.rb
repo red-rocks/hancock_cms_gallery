@@ -38,6 +38,11 @@ module Hancock::Gallery::Shrineable
         def self.#{name}_is_image?; #{!!is_image}; end
         def #{name}_is_image?; self.class.#{name}_is_image?; end
 
+        def update_#{name}_derivatives
+          self.#{name}_derivatives!
+        end
+        before_save :update_#{name}_derivatives, if: :#{name}_changed?
+
         def remove_#{name}!
           if respond_to?(:remove_#{name}=)
             self.remove_#{name} = 1

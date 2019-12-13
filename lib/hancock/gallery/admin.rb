@@ -33,7 +33,11 @@ module Hancock::Gallery
       Proc.new {
         active is_active
         label options[:label] || I18n.t('hancock.images')
-        field :image, :hancock_image
+        if defined?(HancockShrine)
+          field :image, :hancock_shrine
+        else
+          field :image, :hancock_image
+        end
 
         Hancock::RailsAdminGroupPatch::hancock_cms_group(self, fields)
 

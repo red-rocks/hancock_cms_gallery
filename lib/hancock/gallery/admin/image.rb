@@ -29,7 +29,8 @@ module Hancock::Gallery
           field :name, :string do
             searchable true
           end
-          field :image, :hancock_image
+          
+          field :image, (defined?(HancockShrine) ? :hancock_shrine : :hancock_image)
 
           if Hancock::Gallery.config.cache_support
             group :caching, &Hancock::Cache::Admin.caching_block

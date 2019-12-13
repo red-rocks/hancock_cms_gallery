@@ -11,7 +11,11 @@ module Hancock::Gallery
 
         if fields
           if fields.is_a?(Hash)
-            fields.reverse_merge!({image: :hancock_image})
+            if defined?(HancockShrine)
+              fields.reverse_merge!({image: :hancock_shrine})
+            else
+              fields.reverse_merge!({image: :hancock_image})
+            end
           else
             finded = false
             fields.each { |g|
@@ -21,7 +25,7 @@ module Hancock::Gallery
               fields << {
                 name: :default,
                 fields: {
-                  image: :hancock_image
+                  image: (defined?(HancockShrine) ? :hancock_shrine : :hancock_image)
                 }
               }
             end
