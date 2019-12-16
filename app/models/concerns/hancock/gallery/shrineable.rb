@@ -99,7 +99,8 @@ module Hancock::Gallery::Shrineable
         end
 
         def get_#{name}(style = :original)
-          (#{name} and #{name}[style])
+          # (#{name} and #{name}[style])
+          (#{name} and #{name}(style))
         end
       RUBY
 
