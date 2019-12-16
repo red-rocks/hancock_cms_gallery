@@ -34,9 +34,9 @@ if defined?(::Paperclip)
   # require "paperclip-optimizer"
 end
 
-require "ack_rails_admin_jcrop"
+# require "ack_rails_admin_jcrop"
 
-require "hancock/gallery/rails_admin_ext/hancock_image"
+# require "hancock/gallery/rails_admin_ext/hancock_image"
 
 require 'hancock/gallery/configuration'
 require 'hancock/gallery/engine'

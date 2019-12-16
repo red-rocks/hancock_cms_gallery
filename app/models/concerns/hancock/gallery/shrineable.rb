@@ -13,8 +13,16 @@ module Hancock::Gallery::Shrineable
       unless opts.blank?
         crop_options = opts.delete(:crop_options)
         is_image = opts.delete(:is_image)
-        is_image = true if is_image.nil?
       end
+      is_image = true if is_image.nil?
+
+      if is_image
+        attr_accessor :crop_x
+        attr_accessor :crop_y
+        attr_accessor :crop_w
+        attr_accessor :crop_h
+      end
+      
       # uploader_class = opts.delete(:uploader_class) || ("#{self.to_s.camelize}#{name.to_s.camelize}Uploader").constantize
       uploader_class = if opts 
         if opts.has_key?(:uploader_class)
@@ -124,18 +132,14 @@ module Hancock::Gallery::Shrineable
     end
 
     def get_uploader_class(name, is_image)
-      # puts 'def get_uploader_class_name(name)'
-      # puts self.inspect
-      # puts name.inspect
       uploader_class = "#{self.name.camelize}#{name.to_s.camelize}Uploader".safe_constantize
-      # puts uploader_class.inspect
       
       if uploader_class
         uploader_class
       else
         _superclass = self.superclass
         if _superclass < Hancock::Gallery::Shrineable
-          _superclass.get_uploader_class(name, is_image).safe_constantize rescue nil
+          _superclass.get_uploader_class(name, is_image) rescue nil
         else
           (is_image ? HancockImageUploader : HancockUploader)
         end
