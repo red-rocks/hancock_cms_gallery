@@ -57,8 +57,12 @@ module Hancock::Gallery::Shrineable
             self.save
           end
         end
-        def #{name}?
-          !#{name}.blank?
+        def #{name}?(style = nil)
+          if style
+            !#{name}(style.to_sym).blank?
+          else
+            !#{name}.blank?
+          end
         end
         def reprocess_#{name}!
           if #{attacher} and #{attacher}.respond_to?(:derivatives)
