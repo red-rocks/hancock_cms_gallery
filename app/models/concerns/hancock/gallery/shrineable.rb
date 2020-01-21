@@ -47,7 +47,7 @@ module Hancock::Gallery::Shrineable
         def #{name}_is_image?; self.class.#{name}_is_image?; end
 
         def update_#{name}_derivatives
-          self.#{name}_derivatives!
+          self.#{name}_derivatives! if self.#{name} and self.#{name}?
         end
         before_save :update_#{name}_derivatives, if: :#{name}_changed?
 
