@@ -48,6 +48,7 @@ module Hancock::Gallery::Shrineable
 
         def update_#{name}_derivatives
           self.#{name}_derivatives! if self.#{name} and self.#{name}?
+          # self.#{name}_attacher.promote if self.#{name} and self.#{name}?
         end
         before_save :update_#{name}_derivatives, if: :#{name}_changed?
 
