@@ -47,11 +47,15 @@ module Hancock::Gallery::Shrineable
         def #{name}_is_image?; self.class.#{name}_is_image?; end
 
         def update_#{name}_derivatives
-          self.#{name}_derivatives! if self.#{name} and self.#{name}?
+          unless self.#{name}_attacher.derivatives_processed
+            self.#{name}_derivatives!# if self.#{name} and self.#{name}? # and #{name}_changed?
+          end
+          self.#{name}_derivatives
           # self.#{name}_attacher.promote if self.#{name} and self.#{name}?
         end
         # before_save :update_#{name}_derivatives, if: :#{name}_changed?
-        before_create :update_#{name}_derivatives
+        # before_create :update_#{name}_derivatives
+        before_save :update_#{name}_derivatives, if: :#{name}?
 
         def remove_#{name}!
           if respond_to?(:remove_#{name}=)
