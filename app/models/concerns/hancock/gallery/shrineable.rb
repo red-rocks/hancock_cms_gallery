@@ -47,13 +47,15 @@ module Hancock::Gallery::Shrineable
         def #{name}_is_image?; self.class.#{name}_is_image?; end
 
         def update_#{name}_derivatives
-          unless self.#{name}_attacher.derivatives_processed
-            self.#{name}_derivatives!# if self.#{name} and self.#{name}? # and #{name}_changed?
+          if #{name}? and #{name}_changed?
+            unless #{name}_attacher.derivatives_processed
+              #{name}_derivatives!# if #{name} and #{name}? # and #{name}_changed?
+            end
+            #{name}_derivatives
+            # #{name}_attacher.promote if #{name} and #{name}?
           end
-          self.#{name}_derivatives
-          # self.#{name}_attacher.promote if self.#{name} and self.#{name}?
         end
-        before_save :update_#{name}_derivatives, if: :#{name}_changed?
+        before_save :update_#{name}_derivatives
         # before_create :update_#{name}_derivatives
         # before_save :update_#{name}_derivatives, if: :#{name}?
 
@@ -70,40 +72,7 @@ module Hancock::Gallery::Shrineable
             !#{name}.blank?
           end
         end
-        # def reprocess_#{name}!
-        #   if #{attacher} and #{attacher}.respond_to?(:derivatives)
-        #     #{attacher}.remove_derivatives
-        #     return (#{name}_derivatives! and self.save!)
-        #   end
-        #   file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
-        #   if #{attacher}.stored?
-        #     self.update!(#{name}: file)
-        #     # self.#{attacher}._promote(action: :store)
-        #   else
-        #     if #{attacher}.cached?
-        #       #{attacher}.store!(#{name})
-        #       self.save
-        #     end
-        #   end
-        # end
-        # def reprocess_#{name}
-        #   puts 'reprocess_ #{name}'
-        #   if #{attacher} and #{attacher}.respond_to?(:derivatives)
-        #     #{attacher}.remove_derivatives
-        #     return #{name}_derivatives!
-        #   end
-          
-        #   file = (#{name}.is_a?(Hash) ? #{name}[:original] : #{name})
-        #   if #{attacher}.stored?
-        #     self.assign_attributes(#{name}: file)
-        #     # self.update(#{name}: file)
-        #     # self.#{attacher}._promote(action: :store)
-        #   else
-        #     if #{attacher}.cached?
-        #       #{attacher}.store!(#{name})
-        #     end
-        #   end
-        # end
+        
         def #{name}_updated_at
           (#{name} and #{name}.timestamp)
         end
