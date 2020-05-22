@@ -49,7 +49,7 @@ module Hancock::Gallery::Shrineable
         def update_#{name}_derivatives
           if #{name}? and #{name}_changed?
             unless #{name}_attacher.derivatives_processed
-              #{name}_derivatives!# if #{name} and #{name}? # and #{name}_changed?
+              # #{name}_derivatives!# if #{name} and #{name}? # and #{name}_changed?
               #{name}_attacher.create_derivatives
             end
             #{name}_derivatives
