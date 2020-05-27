@@ -37,23 +37,29 @@ module Hancock::Gallery::Shrineable
 
       attachment_class = uploader_class::Attachment
       
-      include attachment_class.new(name, hancock_model: self, is_image: is_image)
+      include attachment_class.new(name, hancock_model: self, is_image: is_image, uploader_class: uploader_class)
       field "#{name}_data", type: Hash
       
       attacher = "#{name}_attacher"
+
+      styles_method_name = opts.delete(:styles_method_name)
+      styles_method_name = "#{name}_styles" if styles_method_name.nil?
       
       class_eval <<-RUBY
         def self.#{name}_is_image?; #{!!is_image}; end
         def #{name}_is_image?; self.class.#{name}_is_image?; end
 
         def update_#{name}_derivatives
-          if #{name}? and #{name}_changed?
-            unless #{name}_attacher.derivatives_processed
-              #{name}_derivatives!# if #{name} and #{name}? # and #{name}_changed?
-              # #{name}_attacher.create_derivatives
+          if #{name}?
+            _styles = (#{styles_method_name} || {}).keys
+            if #{name}_changed? or _styles.any? { |s| !#{name}?(s) }
+              unless #{attacher}.derivatives_processed
+                #{name}_derivatives!# if #{name} and #{name}? # and #{name}_changed?
+                # #{attacher}.create_derivatives
+              end
             end
             #{name}_derivatives
-            # #{name}_attacher.promote if #{name} and #{name}?
+            # #{attacher}.promote if #{name} and #{name}?
           end
         end
         before_save :update_#{name}_derivatives
@@ -84,8 +90,7 @@ module Hancock::Gallery::Shrineable
         end
       RUBY
 
-      styles_method_name = opts.delete(:styles_method_name)
-      styles_method_name = "#{name}_styles" if styles_method_name.nil?
+
       if styles_method_name
         class_eval <<-RUBY
           def #{styles_method_name}
@@ -113,7 +118,8 @@ module Hancock::Gallery::Shrineable
     end
 
     def get_uploader_class(name, is_image)
-      uploader_class = "#{self.name.camelize}#{name.to_s.camelize}Uploader".safe_constantize
+      # uploader_class = "#{self.name.camelize}#{name.to_s.camelize}Uploader".safe_constantize
+      uploader_class = try("#{name}_attacher")&.try(:uploader_class)
       
       if uploader_class
         uploader_class
